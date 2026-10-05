@@ -1,0 +1,513 @@
+/* ----------------------------------------------------------------------------
+   Торжественное окно обратного отсчёта до открытия платформы
+   (app/OpeningCountdown.tsx). Поверх всего сайта, кроме помехи снимку
+   экрана для гостей (у неё z-index на единицу больше максимума).
+   ---------------------------------------------------------------------------- */
+html.opening-lock,
+html.opening-lock body {
+  overflow: hidden;
+}
+
+.opening-stage {
+  --opening-blue: #1c44da;
+  --opening-blue-light: #4d6dff;
+  --opening-blue-dark: #0a1b82;
+  --opening-lime: #d7ff24;
+  --opening-pink: #ff4ead;
+  --opening-cyan: #33e7ff;
+  --opening-ground: clamp(40px, 7vh, 64px);
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  /* Снизу оставлено место под землю и ленточку: текст не должен на неё
+     заходить. */
+  padding: max(24px, env(safe-area-inset-top)) 16px calc(var(--opening-ground) + env(safe-area-inset-bottom) + clamp(64px, 11vh, 96px));
+  color: #fff;
+  font-family: "Monocraft", monospace;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 108%, rgba(77, 109, 255, 0.55), transparent 70%),
+    radial-gradient(ellipse 120% 90% at 50% 100%, #0b1a6b 0%, #070b2e 45%, #03040f 100%);
+  isolation: isolate;
+  container-type: inline-size;
+}
+
+.opening-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Лучи прожекторов за логотипом. */
+.opening-rays {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  z-index: 0;
+  width: 190vmax;
+  height: 190vmax;
+  transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(from 0deg, rgba(215, 255, 36, 0.1) 0deg 5deg, transparent 5deg 15deg);
+  -webkit-mask-image: radial-gradient(circle, #000 0 10%, transparent 46%);
+  mask-image: radial-gradient(circle, #000 0 10%, transparent 46%);
+  animation: opening-rays-spin 80s linear infinite;
+  pointer-events: none;
+}
+
+.phase-open .opening-rays {
+  background: repeating-conic-gradient(from 0deg, rgba(255, 78, 173, 0.16) 0deg 5deg, rgba(215, 255, 36, 0.14) 5deg 10deg, transparent 10deg 15deg);
+  animation-duration: 12s;
+}
+
+.opening-content {
+  position: relative;
+  z-index: 3;
+  width: min(1100px, 100%);
+  display: grid;
+  justify-items: center;
+  gap: clamp(8px, 1.6vh, 16px);
+  text-align: center;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.opening-eyebrow {
+  margin: 0;
+  color: var(--opening-lime);
+  font-size: clamp(10px, 1.6cqi, 14px);
+  letter-spacing: 0.3em;
+  animation: opening-glow 2.4s ease-in-out infinite;
+}
+
+.opening-logo {
+  width: clamp(56px, 9vh, 96px);
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 18px rgba(215, 255, 36, 0.45));
+  animation: opening-float 3.2s ease-in-out infinite;
+}
+
+/* Monocraft моноширинный: 12 символов занимают 8em. Колонка текста не шире
+   1100px, поэтому потолок 128px (8em = 1024px), а 11.5cqi держит название в
+   ширине узкого экрана. Перенос запрещён: «T» не должна уезжать вниз. */
+.opening-title {
+  margin: 0;
+  font-size: min(128px, 11.5cqi);
+  white-space: nowrap;
+  line-height: 0.95;
+  letter-spacing: 0;
+  color: transparent;
+  background: linear-gradient(100deg, #fff 0%, #fff 38%, var(--opening-lime) 48%, #fff 58%, #fff 100%) 0 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(4px 4px 0 var(--opening-blue-dark)) drop-shadow(3px 3px 0 #000);
+  animation: opening-shimmer 4.5s linear infinite;
+}
+
+.opening-subtitle {
+  margin: 0;
+  font-size: clamp(16px, 3.2cqi, 34px);
+  letter-spacing: 0.12em;
+}
+
+.opening-date {
+  margin: 0;
+  padding: 6px 12px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--opening-cyan);
+  font-size: clamp(10px, 1.6cqi, 14px);
+  text-transform: uppercase;
+}
+
+.opening-timer {
+  margin-top: clamp(6px, 1.5vh, 16px);
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2cqi, 22px);
+}
+
+/* Плитка отсчёта сделана как блок логотипа: синяя грань, светлый скос
+   сверху и слева, тёмный снизу и справа, чёрный контур. */
+.opening-unit {
+  min-width: clamp(64px, 14cqi, 150px);
+  padding: clamp(10px, 1.6vh, 18px) clamp(8px, 1.4cqi, 16px) clamp(8px, 1.2vh, 14px);
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  border: 3px solid #000;
+  background: var(--opening-blue);
+  box-shadow:
+    inset 6px 6px 0 var(--opening-blue-light),
+    inset -6px -6px 0 var(--opening-blue-dark),
+    6px 6px 0 rgba(0, 0, 0, 0.55);
+}
+
+.opening-digits {
+  font-size: clamp(30px, 8cqi, 88px);
+  line-height: 1;
+  text-shadow: 3px 3px 0 var(--opening-blue-dark);
+  animation: opening-tick 0.45s steps(5) both;
+}
+
+.opening-unit.seconds .opening-digits {
+  color: var(--opening-lime);
+}
+
+.opening-unit small {
+  color: var(--opening-lime);
+  font-size: clamp(8px, 1.2cqi, 11px);
+  letter-spacing: 0.18em;
+}
+
+.opening-tagline {
+  max-width: 46ch;
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(10px, 1.5cqi, 14px);
+  line-height: 1.6;
+}
+
+.opening-ip {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: clamp(9px, 1.3cqi, 12px);
+  letter-spacing: 0.1em;
+}
+
+/* Ленточка открытия с бантом. */
+.opening-ribbon {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--opening-ground) + env(safe-area-inset-bottom) + clamp(16px, 3vh, 28px));
+  left: 0;
+  z-index: 2;
+  height: clamp(18px, 3vh, 28px);
+  pointer-events: none;
+}
+
+.opening-ribbon-left,
+.opening-ribbon-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: repeating-linear-gradient(90deg, #d4102b 0 16px, #b20d24 16px 32px);
+  box-shadow: inset 0 4px 0 #ff5a6e, inset 0 -4px 0 #6d0616, 0 4px 0 rgba(0, 0, 0, 0.35);
+  transition: transform 1.4s cubic-bezier(0.55, -0.2, 0.75, 0.5), opacity 1.4s ease;
+}
+
+.opening-ribbon-left {
+  left: 0;
+  transform-origin: left center;
+}
+
+.opening-ribbon-right {
+  right: 0;
+  transform-origin: right center;
+}
+
+.opening-bow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(64px, 10vh, 96px);
+  height: clamp(40px, 6vh, 60px);
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(circle at 50% 50%, #ffd23f 0 17%, transparent 18%),
+    conic-gradient(from 45deg, #d4102b 0 25%, #8f0a1d 0 50%, #d4102b 0 75%, #8f0a1d 0);
+  clip-path: polygon(0 0, 50% 38%, 100% 0, 100% 100%, 50% 62%, 0 100%);
+  filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.4));
+  transition: transform 1.2s ease-in, opacity 1.2s ease-in;
+}
+
+.opening-snip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.phase-open .opening-ribbon-left {
+  opacity: 0;
+  transform: translateY(40vh) rotate(-24deg);
+}
+
+.phase-open .opening-ribbon-right {
+  opacity: 0;
+  transform: translateY(40vh) rotate(24deg);
+}
+
+.phase-open .opening-bow {
+  opacity: 0;
+  transform: translate(-50%, 60vh) rotate(90deg);
+}
+
+.phase-open .opening-snip {
+  animation: opening-snip 0.8s ease-out forwards;
+}
+
+/* Земля и Попперс. */
+.opening-ground {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  height: calc(var(--opening-ground) + env(safe-area-inset-bottom));
+  background:
+    linear-gradient(#5dbb3a 0 28%, #3f8f27 28% 40%, transparent 40%),
+    repeating-linear-gradient(90deg, #7a5230 0 16px, #6a4526 16px 32px);
+  box-shadow: inset 0 3px 0 #8ee05a;
+}
+
+.opening-villager {
+  position: absolute;
+  bottom: 100%;
+  left: clamp(12px, 6vw, 90px);
+  width: clamp(56px, 9vh, 88px);
+  height: auto;
+  image-rendering: pixelated;
+  animation: opening-bob 1.6s steps(2) infinite;
+}
+
+.opening-villager-bubble {
+  position: absolute;
+  bottom: calc(100% + clamp(50px, 8vh, 80px));
+  left: calc(clamp(12px, 6vw, 90px) + clamp(44px, 7vh, 70px));
+  padding: 6px 8px;
+  border: 2px solid #000;
+  background: #fff;
+  color: #000;
+  font-size: 10px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+
+.opening-admin-link {
+  position: absolute;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: calc(var(--opening-ground) + env(safe-area-inset-bottom) + 10px);
+  z-index: 4;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+  text-decoration: underline;
+}
+
+.opening-preview-chip {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 5;
+  padding: 8px 10px;
+  border: 2px solid #000;
+  background: var(--opening-lime);
+  color: #000;
+  font: 900 10px "Monocraft", monospace;
+  box-shadow: 3px 3px 0 #000;
+  cursor: pointer;
+}
+
+/* Последние десять секунд. */
+.opening-final {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.opening-final span {
+  color: var(--opening-lime);
+  font-size: min(52vmin, 420px);
+  line-height: 1;
+  text-shadow: 8px 8px 0 var(--opening-blue-dark), 16px 16px 0 #000;
+  animation: opening-final-pop 1s ease-out both;
+}
+
+.phase-final .opening-content {
+  opacity: 0.18;
+  transform: scale(0.96);
+}
+
+/* Момент открытия. */
+.phase-open .opening-subtitle {
+  color: var(--opening-lime);
+  font-size: clamp(28px, 7cqi, 80px);
+  text-shadow: 4px 4px 0 var(--opening-blue-dark);
+  animation: opening-celebrate 0.9s steps(6) both;
+}
+
+.opening-enter {
+  min-height: 48px;
+  margin-top: 10px;
+  padding: 12px 18px;
+  border: 3px solid #000;
+  background: var(--opening-lime);
+  color: #000;
+  font: 900 clamp(11px, 1.6cqi, 14px) "Monocraft", monospace;
+  box-shadow: 5px 5px 0 #000;
+  cursor: pointer;
+  animation: opening-celebrate 0.6s 0.6s steps(4) both;
+}
+
+.opening-enter:focus-visible,
+.opening-preview-chip:focus-visible,
+.opening-admin-link:focus-visible {
+  outline: 3px solid var(--opening-cyan);
+  outline-offset: 3px;
+}
+
+@keyframes opening-rays-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes opening-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -150% 0; }
+}
+
+@keyframes opening-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes opening-glow {
+  0%, 100% { opacity: 0.75; text-shadow: none; }
+  50% { opacity: 1; text-shadow: 0 0 12px rgba(215, 255, 36, 0.8); }
+}
+
+@keyframes opening-tick {
+  from { opacity: 0; transform: translateY(-35%) scale(1.15); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes opening-bob {
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes opening-final-pop {
+  0% { opacity: 0; transform: scale(2.2); }
+  25% { opacity: 1; transform: scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: scale(0.7); }
+}
+
+@keyframes opening-celebrate {
+  from { opacity: 0; transform: scale(0.4) rotate(-6deg); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes opening-snip {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(40); }
+}
+
+/* Низкие экраны (телефон в альбомной ориентации): лишнее убираем. */
+@media (max-height: 560px) {
+  .opening-logo,
+  .opening-tagline,
+  .opening-villager-bubble {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening-rays,
+  .opening-title,
+  .opening-logo,
+  .opening-eyebrow,
+  .opening-villager,
+  .opening-digits,
+  .opening-final span,
+  .phase-open .opening-subtitle,
+  .opening-enter {
+    animation: none;
+  }
+}
+
+/* Карточка «Открытие платформы» в управлении. */
+.opening-setting {
+  color: #fff;
+  background:
+    radial-gradient(ellipse 70% 120% at 100% 100%, rgba(77, 109, 255, 0.55), transparent 70%),
+    #0b1233;
+}
+
+.opening-setting.enabled {
+  background:
+    repeating-linear-gradient(135deg, rgba(215, 255, 36, 0.08) 0 12px, transparent 12px 24px),
+    #0b1233;
+}
+
+/* Белый текст карточки не должен доставаться кнопкам и метке: у них свой
+   светлый фон, и белые надписи на нём пропадали. */
+.opening-setting .application-status {
+  color: #111;
+  background: #d7ff24;
+}
+
+.opening-setting.enabled .application-status {
+  background: #ff4ead;
+}
+
+.opening-setting button {
+  color: var(--ink);
+}
+
+.opening-setting .danger-button {
+  color: #fff;
+}
+
+.opening-setting button:disabled {
+  opacity: 0.6;
+}
+
+.opening-setting small {
+  color: #d7ff24;
+}
+
+.maintenance-controls input[type="datetime-local"] {
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+
+.opening-quick {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.maintenance-setting .opening-quick button {
+  min-height: 38px;
+  padding: 6px 4px;
+  background: #fff;
+  font-size: 9px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.opening-preview-link {
+  min-height: 40px;
+  padding: 10px 12px;
+  display: grid;
+  place-items: center;
+  border: 3px solid #33e7ff;
+  color: #33e7ff;
+  font-weight: 900;
+  text-decoration: none;
+}

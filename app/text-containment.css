@@ -1,0 +1,1693 @@
+/* ============================================================================
+   ЖЁСТКАЯ СТРУКТУРА ТЕКСТА
+   ----------------------------------------------------------------------------
+   Задача: текст не может вылезти за пределы своего блока и не может наехать
+   на соседний текст ни на одной ширине экрана.
+
+   Система состоит из двух частей:
+
+   1. Этот файл — универсальная страховка и объявление блоков контейнерами.
+   2. globals.css — у заголовков размер записан как min(<исходный>, K cqi),
+      то есть «исходный размер, но не больше, чем помещается в блок».
+      Потолок добавлен к каждому правилу отдельно, поэтому все существующие
+      адаптивные размеры внутри медиа-запросов продолжают работать.
+
+   МАТЕМАТИКА. Monocraft — строго моноширинный шрифт, ширина одного символа
+   равна ровно 2/3 кегля (проверено замером: 66.667px при font-size 100px).
+   Значит ширина строки из N символов = N * 2/3 * font-size, а обратная
+   формула — какой кегль гарантированно вмещает N символов в блок шириной
+   100cqi (cqi = 1% ширины блока-контейнера):
+
+       font-size <= 150cqi / N
+
+   Поэтому потолок записывается как K cqi, где K = 150 / N. Рядом с каждым
+   значением в globals.css указано, на сколько символов он рассчитан.
+
+   Приём с min() не меняет вид сайта там, где текст и так помещается: min()
+   выбирает исходный размер, пока блок достаточно широкий, и вступает в силу
+   только когда блок узкий.
+   ============================================================================ */
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 1. Универсальная страховка.
+   Селекторы обёрнуты в :where() — нулевая специфичность, поэтому любое
+   существующее правило по-прежнему сильнее и вид сайта не меняется.
+   ---------------------------------------------------------------------------- */
+
+/* Элемент flex/grid по умолчанию имеет min-width: auto и отказывается сжиматься
+   меньше своего содержимого — именно так длинное слово выталкивает вёрстку за
+   пределы родителя. Обнуление разрешает сжатие, а перенос ниже не даёт
+   тексту обрезаться. */
+:where(body *) {
+  min-width: 0;
+}
+
+/* Ни одно слово не может быть шире своего блока: длинное слово переносится,
+   а в крайнем случае разрывается. Это гарантия, не зависящая от контента.
+
+   Важно, что здесь именно anywhere, а не break-word. Оба одинаково переносят
+   слово, но только anywhere уменьшает минимальную внутреннюю ширину элемента.
+   При break-word элемент внутри flex/grid по-прежнему требует себе ширину
+   самого длинного слова и распирает родителя. */
+:where(h1, h2, h3, h4, h5, h6, p, li, dt, dd, td, th, caption, figcaption,
+  blockquote, label, legend, summary, a, button, span, b, strong, em, i, small,
+  time, address, output, option) {
+  overflow-wrap: anywhere;
+}
+
+/* Поля ввода не должны распирать форму своей атрибутивной шириной. */
+:where(input, textarea, select) {
+  max-width: 100%;
+}
+
+/* Текстовые блоки не выходят за родителя по ширине. */
+:where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure, table) {
+  max-width: 100%;
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 2. Контейнерные контексты.
+   Блоки объявляются контейнерами, чтобы размер текста внутри можно было
+   привязать к ширине самого блока (cqi), а не к ширине экрана (vw).
+
+   Контейнером объявляется только блок, ширину которого задаёт родитель.
+   Элементы, которые сами растягиваются по содержимому, контейнерами не
+   объявляются: container-type сломал бы им расчёт ширины. Элемент также не
+   может быть контейнером для собственного размера шрифта — отсчёт всегда
+   идёт от ближайшего предка-контейнера.
+   ---------------------------------------------------------------------------- */
+.soon-card-body > div,
+.rules-window > header,
+.rules-window > section,
+.section-heading,
+.feature-card,
+.wiki-hero,
+.wiki-card,
+.wiki-mods-hero,
+.wiki-article-card,
+.wiki-reader-header,
+.wiki-community-heading,
+.wiki-comments-title,
+.launcher-hero,
+.launcher-platform-card,
+.feed-post,
+.player-card,
+.connections-content,
+.profile-content,
+.member-content,
+.site-board-block,
+.admin-header,
+.admin-panel-heading,
+.bug-report-form,
+.rating-prompt,
+.cookie-consent-content,
+.cookies-info-content,
+.mfa-challenge-form,
+.discord-card,
+.support-receipt,
+.communication-metric-card,
+.mod-catalog-grid > article,
+.donation-copy,
+.update-row {
+  container-type: inline-size;
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 3. Структурные исправления блоков, где текст выдавливало наружу.
+   ---------------------------------------------------------------------------- */
+
+/* Шаги вайтлиста стоят в ряд и раньше выдавливали друг друга.
+   Ряд получает право переноса на вторую строку. */
+.waitlist-steps {
+  flex-wrap: wrap;
+}
+
+/* Плашка версии стоит в колонке шириной 70px, а «СТАТУС» — это 6 символов.
+   Боковые отступы уменьшены, чтобы освободить место под сам текст, а размер
+   записан как 1em с потолком: наследование от body сохраняется, но текст не
+   может стать шире колонки. Отсчёт идёт от ширины строки .update-row. */
+.version-box {
+  padding-inline: 4px;
+  font-size: min(1em, 5cqi);
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 6. Отметка версии сайта справа от подписи в подвале.
+   Видно только слово «Version»; имя релиза раскрывается при наведении и при
+   фокусе — фокус нужен для телефонов, где наведения нет.
+   Номер совпадает с именем каталога релиза на сервере.
+   ---------------------------------------------------------------------------- */
+.release-stamp {
+  margin-left: 10px;
+  display: inline-flex;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.release-stamp-trigger {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #6f6f6f;
+  font: inherit;
+  letter-spacing: 1px;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+.release-stamp-trigger:hover,
+.release-stamp-trigger:focus-visible {
+  color: var(--acid);
+}
+
+.release-stamp-value {
+  /* Подсказка выведена из потока и не влияет на ширину подписи. */
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 60;
+  width: max-content;
+  max-width: min(320px, 80vw);
+  padding: 7px 9px;
+  display: grid;
+  gap: 3px;
+  border: 2px solid var(--ink);
+  background: #111;
+  color: #d8d8d8;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-align: center;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .12s ease;
+}
+
+/* Здесь именно :focus, а не :focus-visible. На телефоне подсказка должна
+   открываться касанием, а :focus-visible при касании не срабатывает —
+   он рассчитан на клавиатурную навигацию. */
+.release-stamp:hover .release-stamp-value,
+.release-stamp-trigger:focus + .release-stamp-value {
+  opacity: 1;
+  visibility: visible;
+}
+
+.release-stamp-value b {
+  color: var(--acid);
+}
+
+.release-stamp-value span {
+  overflow-wrap: anywhere;
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 7. Подвал на телефоне.
+
+   Логотип POPPERSCRAFT лежит в .footer-brand-stage с position: absolute и
+   растёт от ширины экрана (8.2vw). Место под него в потоке зарезервировано
+   не было, поэтому на широких телефонах он наезжал на строку ссылок:
+   содержимое заканчивалось в 74px от низа подвала, а область логотипа
+   начиналась в 108px. Замер до исправления: перекрытие 8px при 480–760px и
+   4px при 430px.
+
+   Нижний отступ подвала теперь равен полной высоте области логотипа
+   (42px отступ снизу + 66px высота) плюс 12px зазора.
+   ---------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  /* Логотип растянут по всей ширине экрана с отступом 14px по краям.
+
+     Расчёт по той же моноширинной формуле. «POPPERSCRAFT» — 12 символов,
+     letter-spacing: -0.08em, поэтому один символ занимает (2/3 - 0.08) кегля:
+
+         ширина строки = 12 * (0.667 - 0.08) * font-size = 7.04 * font-size
+
+     Чтобы строка заняла всю ширину блока (100cqi):
+
+         font-size = 100cqi / 7.04 = 14.2cqi
+
+     Блок-сцена объявлена контейнером, её высота теперь считается по
+     содержимому, поэтому логотип любого размера в неё помещается. */
+  .footer-brand-stage {
+    container-type: inline-size;
+    right: 14px;
+    left: 14px;
+    height: auto;
+    justify-content: center;
+  }
+
+  .footer-logo {
+    width: 100%;
+    letter-spacing: -0.08em;
+    white-space: nowrap;
+  }
+
+  /* Подвал резервирует место под выросший логотип: отступ снизу (42px),
+     высота самой надписи (примерно 14.2vw) и зазор до ссылок. */
+  .site-footer {
+    padding-bottom: max(120px, calc(14.2vw + 58px + env(safe-area-inset-bottom)));
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 4. Строки без переноса.
+   Там, где перенос запрещён осознанно (заголовки окон), текст обязан
+   получать многоточие вместо выхода за границу.
+   ---------------------------------------------------------------------------- */
+.window-bar > span:not(.minecraft-icon),
+.window-title-with-icon,
+.site-board-window-bar span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Элемент с white-space: nowrap обязан не только не переноситься, но и не
+   сжиматься. Иначе общий min-width: 0 из слоя 1 позволяет ему стать уже
+   собственного текста, а текст, которому запрещён перенос, вытекает наружу и
+   наезжает на соседний — ровно так «ПРАВИЛО ДВУХ ФАКЕЛОВ» в жёлтой плашке
+   админки залезало на пояснение справа.
+
+   Правило не распространяется на элементы с многоточием (text-overflow):
+   им сжатие как раз нужно, они обрезают текст аккуратно. */
+.soon-card .join-button,
+.mod-catalog-search > p,
+.admin-rule-banner b,
+.mini-logo,
+.online-pill,
+.header-login-button,
+.popular,
+.feed-poll-option b,
+.poppers-assistant-button span,
+.communication-rating-card strong {
+  flex-shrink: 0;
+}
+
+/* Плашка переносит пояснение на следующую строку, когда метка и текст рядом
+   уже не помещаются. */
+.admin-rule-banner {
+  flex-wrap: wrap;
+}
+
+/* На совсем узких экранах даже одна метка шире плашки, поэтому там ей
+   разрешён перенос: лучше две строки, чем текст за границей. */
+@media (max-width: 520px) {
+  .admin-rule-banner b {
+    white-space: normal;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 5. Высота текстовых коробок.
+   Фиксированная высота обрезает текст, как только он занимает вторую строку.
+   Для коробки с текстом высота становится минимальной, а не жёсткой.
+   ---------------------------------------------------------------------------- */
+.window-bar {
+  height: auto;
+  min-height: 38px;
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 8. Сжимающаяся шапка на главной.
+
+   Класс is-compact вешает HomePage, когда страницу пролистали вниз. Обратно
+   шапка разжимается только на самом верху страницы — логика порогов в
+   HomePage.tsx. Здесь только размеры и плавность.
+
+   Распорку .site-header-spacer намеренно не трогаем: она держит высоту под
+   фиксированной шапкой и важна лишь в самом верху страницы, где шапка и так
+   полного размера. Если бы распорка сжималась вместе с шапкой, содержимое
+   страницы дёргалось бы вверх в момент сжатия.
+   ---------------------------------------------------------------------------- */
+.site-header {
+  transition: min-height .28s ease, gap .28s ease;
+}
+
+.site-header .mini-logo {
+  transition: font-size .28s ease, gap .28s ease;
+}
+
+.site-header .platform-logo {
+  transition: width .28s ease, height .28s ease, flex-basis .28s ease;
+}
+
+.site-header .main-nav a {
+  transition: font-size .28s ease, min-width .28s ease;
+}
+
+.site-header .header-login-button,
+.site-header .header-profile-logout,
+.site-header .mobile-menu-button {
+  transition: padding .28s ease, font-size .28s ease, min-height .28s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header * {
+    transition: none;
+  }
+}
+
+.site-header.is-compact {
+  min-height: 40px;
+}
+
+.site-header.is-compact .mini-logo {
+  gap: 6px;
+  font-size: 13px;
+}
+
+.site-header.is-compact .platform-logo {
+  width: 22px;
+  height: 22px;
+  flex-basis: 22px;
+}
+
+.site-header.is-compact .header-login-button {
+  min-height: 26px;
+  padding: 5px 10px;
+  font-size: 9px;
+}
+
+.site-header.is-compact .header-profile-logout {
+  padding: 5px 8px;
+  font-size: 9px;
+}
+
+/* Меню в строку — только на десктопе. На телефоне .main-nav это выпадающая
+   панель, её высоту трогать нельзя. */
+@media (min-width: 761px) {
+  .site-header .main-nav {
+    transition: height .28s ease;
+  }
+
+  .site-header.is-compact .main-nav {
+    height: 40px;
+  }
+
+  .site-header.is-compact .main-nav a {
+    min-width: 62px;
+    font-size: 9px;
+  }
+}
+
+/* На телефоне шапка сжимается за счёт отступов и логотипа, но не за счёт
+   кнопок. Сжатие «вдвое», как на компьютере, уменьшало кнопку меню до 32px,
+   а ссылку-логотип до 23px — это ниже минимума в 44px, ниже которого по
+   пальцу попадать тяжело. Мышь такой размер прощает, палец нет. */
+@media (max-width: 760px) {
+  .site-header.is-compact {
+    min-height: calc(48px + env(safe-area-inset-top));
+  }
+
+  .site-header.is-compact .mobile-menu-button,
+  .site-header.is-compact .header-login-button,
+  .site-header.is-compact .mini-logo {
+    min-height: 40px;
+  }
+
+  .site-header.is-compact .mobile-menu-button,
+  .site-header.is-compact .header-login-button {
+    font-size: 10px;
+  }
+
+  .site-header.is-compact .mini-logo {
+    font-size: 15px;
+  }
+
+  .site-header.is-compact .platform-logo {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+  }
+
+  .site-header.is-compact .main-nav {
+    max-height: calc(100dvh - 48px - env(safe-area-inset-top));
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 9. Пользовательское соглашение.
+
+   Три места: окно принятия, текст на странице правил и журнал согласий
+   в админке.
+   ---------------------------------------------------------------------------- */
+
+/* Окно принятия. Модальное и без крестика: пользоваться сайтом, не приняв
+   условия, нельзя. */
+.agreement-gate-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 16000;
+  padding: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .78);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.agreement-gate {
+  width: min(680px, 100%);
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 12px 12px 0 #000;
+}
+
+/* Колонка, а не сетка: в окне с ограниченной высотой строки сетки сжимались,
+   и на телефоне полный текст схлопывался в полоску, а подпись под ним
+   наезжала на него (r099). Блоки не сжимаются — прокручивается всё окно. */
+.agreement-gate-body {
+  padding: clamp(18px, 4vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  background: #f7f3e8;
+  overflow-y: auto;
+}
+
+.agreement-gate-body > * {
+  flex-shrink: 0;
+}
+
+.agreement-gate-body h2 {
+  margin: 0;
+  font-size: min(clamp(26px, 6vw, 44px), 12.5cqi);
+  line-height: .95;
+}
+
+.agreement-gate-body > p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.agreement-gate-summary {
+  margin: 0;
+  padding: 14px 14px 14px 32px;
+  display: grid;
+  gap: 7px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Полный текст прокручивается внутри окна: пользователь может его прочитать,
+   не покидая страницу и не теряя место, где он находился. */
+.agreement-gate-text {
+  min-height: 140px;
+  max-height: min(320px, 38dvh);
+  padding: 14px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.agreement-gate-text h3 {
+  margin: 16px 0 6px;
+  font-size: 13px;
+}
+
+.agreement-gate-text section:first-child h3 {
+  margin-top: 0;
+}
+
+.agreement-gate-text p {
+  margin: 0 0 8px;
+}
+
+.agreement-gate-text ul {
+  margin: 0 0 8px;
+  padding-left: 20px;
+  display: grid;
+  gap: 5px;
+}
+
+.agreement-gate-text:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.agreement-gate-note {
+  margin: 0;
+  font-size: 11px;
+}
+
+.agreement-gate-note a {
+  text-decoration: underline;
+}
+
+.agreement-gate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.agreement-gate-actions button {
+  flex: 1 1 190px;
+  min-height: 46px;
+  padding: 12px 16px;
+  border: 3px solid var(--ink);
+  background: #d4d0c8;
+  box-shadow: 4px 4px 0 var(--ink);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.agreement-gate-actions .agreement-gate-accept {
+  background: var(--acid);
+}
+
+.agreement-gate-actions button:disabled {
+  filter: grayscale(.7);
+  cursor: not-allowed;
+}
+
+/* Соглашение на странице правил. */
+.rules-agreement h3 {
+  margin: 22px 0 8px;
+  font-size: min(clamp(15px, 2.4vw, 21px), 10cqi);
+}
+
+.rules-agreement-meta {
+  font-weight: 900;
+}
+
+.rules-agreement ul {
+  margin: 0 0 12px;
+  padding-left: 24px;
+  display: grid;
+  gap: 8px;
+}
+
+/* Журнал согласий в админке. */
+.agreement-stats {
+  margin-bottom: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.agreement-search {
+  margin-bottom: 14px;
+  display: grid;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.agreement-search input {
+  padding: 11px;
+  border: 3px solid;
+  border-color: #555 #fff #fff #555;
+  background: #fff;
+  font: inherit;
+}
+
+.agreement-log {
+  display: grid;
+  gap: 9px;
+}
+
+.agreement-log article {
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 14px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 11px;
+}
+
+/* Согласие на устаревшую редакцию видно сразу: его придётся собрать заново. */
+.agreement-log article.is-outdated {
+  background: #ffe761;
+}
+
+.agreement-log article b {
+  font-size: 14px;
+}
+
+.agreement-log-version {
+  justify-self: end;
+  padding: 3px 7px;
+  background: var(--acid);
+  border: 2px solid var(--ink);
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.agreement-log article time,
+.agreement-log article small {
+  color: #555;
+  font-size: 10px;
+}
+
+.agreement-log article small {
+  justify-self: end;
+}
+
+@media (max-width: 620px) {
+  .agreement-log article {
+    grid-template-columns: 1fr;
+  }
+
+  .agreement-log-version,
+  .agreement-log article small {
+    justify-self: start;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 10. Деревья в подвале стоят на одной земле с буквами.
+
+   Раньше отступ деревьев от низа блока задавался отдельно (7.1vw, у среднего
+   дерева 8.6vw) и с размером надписи никак не был связан. Буквы растут как
+   12.3vw, поэтому на широком экране деревья оказывались примерно на середине
+   высоты букв и висели в воздухе.
+
+   Земля для букв — это базовая линия шрифта. Заглавные буквы Monocraft стоят
+   на ней ровно (замер: actualBoundingBoxDescent = 0). Найти её можно из
+   метрик шрифта: при line-height, равном кеглю, расстояние от низа строчного
+   бокса до базовой линии равно
+
+       (line-height - (ascent + descent)) / 2 + descent
+
+   Для Monocraft ascent = 1.111em, descent = 0.222em, line-height = 1em:
+
+       (1 - 1.333) / 2 + 0.222 = 0.0556em
+
+   Низ надписи совпадает с низом блока-сцены (align-items: flex-end), поэтому
+   деревья достаточно поднять на те же 0.0556 кегля. Размер вынесен в
+   переменную, чтобы деревья и буквы нельзя было рассинхронизировать. */
+.footer-brand-stage {
+  --footer-logo-size: clamp(42px, 12.3vw, 224px);
+}
+
+.footer-logo {
+  font-size: var(--footer-logo-size);
+}
+
+/* Все три дерева на одной линии: у среднего был собственный отступ. */
+.footer-pixel-tree,
+.footer-pixel-tree-two {
+  bottom: calc(var(--footer-logo-size) * 0.0556);
+}
+
+/* Деревья стоят в просветах между буквами, а не поверх них.
+
+   Просветы найдены замером: надпись отрисована в canvas, и в нижней полосе
+   высотой с дерево посчитаны колонки без единого пикселя. Пустые места по
+   низу строки приходятся на стыки O|P, E|R и A|F — там деревья и стоят,
+   лишь слегка задевая соседние буквы кроной.
+
+   Отсчёт идёт от центра надписи и в кеглях, а не в процентах от
+   блока. Это важно: ширина блока и размер букв связаны только пока кегль не
+   упёрся в верхнюю границу clamp (после 1821px он замирает на 224px, а блок
+   продолжает расти). Позиция в процентах от блока в этот момент уехала бы,
+   позиция в кеглях — нет.
+
+   Шаг одного символа Monocraft с letter-spacing -0.075em равен
+   (2/3 - 0.075) = 0.5917 кегля. Смещения ниже — это расстояние от центра
+   надписи до центра просвета в кеглях. */
+.footer-pixel-tree {
+  /* left задаёт центр дерева, а не его левый край. */
+  transform: translateX(-50%);
+}
+
+.footer-pixel-tree-one {
+  left: calc(50% - 2.436 * var(--footer-logo-size));
+}
+
+.footer-pixel-tree-two {
+  left: calc(50% - 0.735 * var(--footer-logo-size));
+}
+
+.footer-pixel-tree-three {
+  right: auto;
+  left: calc(50% + 2.409 * var(--footer-logo-size));
+}
+
+/* Мобильный размер логотипа задаётся той же переменной и объявлен после
+   базовой, иначе базовое значение перебило бы его по порядку следования.
+   Деревья на телефоне скрыты, но переменная нужна самому логотипу. */
+@media (max-width: 760px) {
+  .footer-brand-stage {
+    --footer-logo-size: 14.2cqi;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   СЛОЙ 11. Помеха снимку экрана для гостей.
+
+   Перекрывает страницу сплошным фоном, пока зажата комбинация снимка. Это
+   именно помеха, а не защита: запретить снимок экрана из браузера нельзя,
+   подробности — в комментарии к GuestScreenshotShield.tsx.
+
+   Слой рисуется поверх всего, включая модальные окна, поэтому z-index выше
+   окна согласия (16000) и подсказки об оценке (15000).
+   ---------------------------------------------------------------------------- */
+.screenshot-shield {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  padding: 24px;
+  /* Тот же фон, что и у страницы:страница остаётся «пустой лист», а не чёрный экран. */
+  background: var(--paper);
+  color: #8a8a8a;
+  text-align: center;
+  /* Мгновенно, без плавности: анимация появления дала бы кадр, на котором
+     содержимое ещё видно. */
+  transition: none;
+}
+
+.screenshot-shield p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.screenshot-shield small {
+  font-size: 10px;
+}
+
+/* ----------------------------------------------------------------------------
+   12. Раздел доната на компьютере не уходит под шапку
+   Раздел закрепляется от самого верха окна (ScrollTrigger start: "top top"),
+   а шапка фиксированная и при прокрутке сжата до 40px + 3px рамки. Без
+   запаса верх раздела — подзаголовок и цифра этапа — прятался под шапкой.
+   Отступ добавляется к прежнему, поэтому пропорции сцены не меняются.
+   ---------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .donation-stage-shell {
+    --donation-header-offset: 43px;
+    padding-top: calc(var(--donation-header-offset) + clamp(14px, 3.2vh, 32px));
+  }
+}
+
+@media (min-width: 768px) and (max-height: 820px) {
+  .donation-stage-shell {
+    padding-top: calc(var(--donation-header-offset) + 14px);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   13. Ответы администратора в чате Попперса
+   Ответ администратора выделен, чтобы его не путали с ответом ИИ. Плашка
+   над полем вопроса показывает, что открыто обращение: пока оно открыто,
+   сообщения получает команда, а не Попперс.
+   ---------------------------------------------------------------------------- */
+.poppers-assistant-log p.admin {
+  border-color: var(--blue);
+  background: #eef2ff;
+  box-shadow: 3px 3px 0 var(--blue);
+}
+
+.poppers-assistant-log p.note {
+  border-style: dashed;
+  background: transparent;
+  color: #444;
+}
+
+/* Ответ Попперса с оформлением (app/PoppersRichText.tsx): заголовок, жирный
+   текст и списки вместо «**», «##» и других служебных символов. */
+.poppers-rich {
+  display: grid;
+  gap: 7px;
+  white-space: normal;
+}
+
+.poppers-rich .poppers-md-h {
+  display: block;
+  margin-top: 3px;
+  color: var(--blue);
+  font-size: 11px;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.poppers-rich .poppers-md-p,
+.poppers-rich li {
+  white-space: pre-wrap;
+}
+
+.poppers-rich ul,
+.poppers-rich ol {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 5px;
+}
+
+/* На сайте у списков маркеры сняты — здесь номера шагов и точки нужны. */
+.poppers-rich ol {
+  list-style: decimal outside;
+}
+
+.poppers-rich ul {
+  list-style: square outside;
+}
+
+.poppers-rich li::marker {
+  color: var(--blue);
+}
+
+/* В пиксельном шрифте нет жирного начертания — выделяем маркером. */
+.poppers-rich strong {
+  font-weight: 700;
+  background: linear-gradient(transparent 55%, #fff07a 55%);
+}
+
+.poppers-rich code {
+  padding: 0 3px;
+  border: 1px solid #c9c4b5;
+  background: #f2efe6;
+  font-family: inherit;
+}
+
+.poppers-rich a {
+  color: var(--blue);
+  text-decoration: underline;
+}
+
+.poppers-assistant-form > .poppers-support-banner {
+  padding: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid var(--ink);
+  background: var(--acid);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.poppers-assistant-form > .poppers-support-banner button {
+  min-height: 32px;
+  padding: 6px 10px;
+  flex-shrink: 0;
+  border: 2px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------------------
+   14. Английская версия и переключатель языка
+   До первого прохода перевода страница скрыта, чтобы не мелькал русский
+   текст (класс снимает app/LanguageRuntime.tsx или предохранитель в <head>).
+   ---------------------------------------------------------------------------- */
+html.i18n-pending body {
+  visibility: hidden;
+}
+
+.language-switch {
+  display: grid;
+  gap: 8px;
+}
+
+.language-switch-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.language-switch-options button {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+  font: 900 12px/1.2 "Monocraft", monospace;
+  cursor: pointer;
+}
+
+.language-switch-options button.is-active {
+  background: var(--acid);
+}
+
+.language-switch-options button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+/* ----------------------------------------------------------------------------
+   15. Почта: ссылка «забыли пароль» и состояние подтверждения адреса
+   Кнопка-ссылка во входе не должна выглядеть как большая зелёная кнопка
+   отправки, поэтому сбрасываем её оформление после globals.css.
+   ---------------------------------------------------------------------------- */
+.login-form button.login-text-link {
+  width: auto;
+  min-height: 0;
+  margin: 12px auto 0;
+  padding: 4px 2px;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  box-shadow: none;
+  font-size: 11px;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.login-form button.login-text-link:hover {
+  background: var(--acid);
+}
+
+.login-form button.login-text-link:active {
+  transform: none;
+  box-shadow: none;
+}
+
+.profile-email-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  background: #fdf6b5;
+  font: 900 11px/1.4 "Monocraft", monospace;
+  overflow-wrap: anywhere;
+}
+
+.profile-email-state.is-confirmed {
+  background: #bff398;
+}
+
+.profile-email-state button {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 900 11px/1.2 "Monocraft", monospace;
+  cursor: pointer;
+}
+
+.profile-email-state button:hover {
+  background: var(--acid);
+}
+
+.profile-email-state button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+/* Подсказка про папку «Спам»: письма с нового домена часто попадают туда,
+   и человек должен знать об этом до того, как решит, что письмо не пришло. */
+.mail-spam-note {
+  margin: 0 0 14px;
+  padding: 9px 11px;
+  border: 2px solid var(--ink);
+  background: #fdf6b5;
+  font: 400 11px/1.5 "Monocraft", monospace;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.login-form .mail-spam-note {
+  text-align: left;
+}
+
+/* В анкете поля стоят в две колонки: подсказка занимает всю ширину, иначе она
+   встаёт колонкой рядом с полем пароля и ломает ряд. */
+.credentials-row .mail-spam-note {
+  grid-column: 1 / -1;
+}
+
+/* ----------------------------------------------------------------------------
+   16. Гардероб: сохранённые образы пони и человека (до трёх)
+   ---------------------------------------------------------------------------- */
+.looks-wardrobe {
+  display: grid;
+  gap: 14px;
+}
+
+.looks-counter {
+  margin: 0;
+  font: 900 11px/1.3 "Monocraft", monospace;
+  letter-spacing: 1px;
+}
+
+.looks-empty {
+  margin: 0;
+  font: 400 12px/1.6 "Monocraft", monospace;
+}
+
+.looks-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.look-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  background: #fff;
+}
+
+.look-card-preview {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+  padding: 8px;
+  border: 2px solid var(--ink);
+  background: repeating-conic-gradient(#e9e6dc 0% 25%, #f7f5ee 0% 50%) 0 0 / 16px 16px;
+}
+
+.look-card-preview canvas {
+  image-rendering: pixelated;
+}
+
+.look-card-texture {
+  width: 80px;
+  height: 80px;
+}
+
+.look-card-body {
+  display: grid;
+  gap: 4px;
+  overflow-wrap: anywhere;
+}
+
+.look-card-body strong {
+  font: 900 12px/1.3 "Monocraft", monospace;
+}
+
+.look-card-body small {
+  font: 400 10px/1.2 "Monocraft", monospace;
+  letter-spacing: 1px;
+  opacity: 0.75;
+}
+
+.look-card-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.look-card-actions button {
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 3px solid var(--ink);
+  background: var(--acid);
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 900 11px/1.2 "Monocraft", monospace;
+  cursor: pointer;
+}
+
+.look-card-actions button.look-card-remove {
+  background: #fff;
+}
+
+.look-card-actions button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.looks-form {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 3px solid var(--ink);
+  background: #f7f5ee;
+}
+
+.looks-form label {
+  display: grid;
+  gap: 6px;
+  font: 900 11px/1.2 "Monocraft", monospace;
+}
+
+.looks-form input,
+.looks-form select {
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  font: 400 12px/1.2 "Monocraft", monospace;
+}
+
+.looks-form button {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 3px solid var(--ink);
+  background: var(--acid);
+  box-shadow: 4px 4px 0 var(--ink);
+  font: 900 12px/1.2 "Monocraft", monospace;
+  cursor: pointer;
+}
+
+.looks-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* ----------------------------------------------------------------------------
+   17. Карточка игрока: BIO и MUSIC рядом со скином, метка сооснователя
+   Колонка со скином выше, чем имя со статистикой, поэтому она растягивается на
+   две строки, а освободившееся место слева занимают карточки о игроке.
+   ---------------------------------------------------------------------------- */
+.player-card .player-skin-rating-column {
+  grid-row: 1 / span 2;
+}
+
+.player-card .player-identity-facts {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  grid-column: 1;
+  min-width: 0;
+}
+
+.player-card .player-identity-facts section {
+  margin-top: 0;
+}
+
+.player-card .player-identity-facts .player-columns {
+  gap: 16px;
+}
+
+@media (max-width: 580px) {
+  .player-card .player-skin-rating-column {
+    grid-row: auto;
+  }
+}
+
+/* Метку ставит платформа по аккаунту владельца, поэтому она оформлена как
+   системная и отличается от жёлтой метки создателя проекта. */
+.player-card .cofounder-badge {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0 10px;
+  background: var(--acid);
+  box-shadow: 4px 4px 0 #2f5d00;
+  letter-spacing: 1px;
+  font-weight: 900;
+}
+
+.player-card .cofounder-badge b {
+  grid-row: 1 / span 2;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.player-card .cofounder-badge small {
+  grid-column: 2;
+  font-size: 9px;
+  letter-spacing: 2px;
+  line-height: 1.6;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+/* ----------------------------------------------------------------------------
+   18. Лента: поиск открывается кнопкой между «Создать пост» и «Список игроков»
+   ---------------------------------------------------------------------------- */
+/* Три колонки вместо flex: кнопка поиска встаёт ровно по центру полосы, а не
+   между соседями разной ширины. */
+.feed-entry-actions {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.feed-entry-actions .feed-open-composer {
+  justify-self: start;
+}
+
+.feed-entry-actions .feed-open-finder {
+  justify-self: end;
+  margin-left: 0;
+}
+
+.feed-entry-actions .feed-open-search {
+  justify-self: center;
+  margin: 0;
+  padding: 15px 22px;
+  display: inline-grid;
+  place-items: center;
+  border: 4px solid var(--ink);
+  background: #fff;
+  box-shadow: 6px 6px 0 var(--ink);
+  font: 900 14px/1 "Monocraft", monospace;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.feed-entry-actions .feed-open-search:hover {
+  background: var(--acid);
+}
+
+@media (max-width: 820px) {
+  .feed-entry-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .feed-entry-actions .feed-open-composer,
+  .feed-entry-actions .feed-open-search,
+  .feed-entry-actions .feed-open-finder {
+    width: 100%;
+    justify-self: stretch;
+    margin: 0;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   19. Лайк на записи в обновлениях
+   ---------------------------------------------------------------------------- */
+/* Последняя колонка строки была рассчитана на галочку в 40 пикселей — кнопке
+   со счётчиком нужно столько, сколько попросит содержимое. */
+.updates-list .update-row {
+  grid-template-columns: 105px 90px minmax(0, 1fr) auto;
+}
+
+@media (max-width: 900px) {
+  .updates-list .update-row {
+    grid-template-columns: 85px minmax(0, 1fr) auto;
+  }
+}
+
+.update-row .update-like {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 6px 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 900 12px/1 "Monocraft", monospace;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.update-row .update-like b {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.update-row .update-like:hover {
+  background: var(--acid);
+}
+
+.update-row .update-like.is-liked {
+  background: #ff9bc4;
+}
+
+.update-row .update-like:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.update-row .update-like:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+/* ----------------------------------------------------------------------------
+   20. «Профиль» и «Мой профиль» выглядят одинаково
+   В шапке ленты и списка игроков ссылка на профиль была простым текстом, тогда
+   как в управлении, вайтлисте и настройках это рамочная кнопка. Приводим её к
+   тому же виду.
+   ---------------------------------------------------------------------------- */
+.community-topbar > a {
+  justify-self: end;
+  min-height: 40px;
+  padding: 10px 13px;
+  display: inline-grid;
+  place-items: center;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--ink);
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.community-topbar > a:hover {
+  background: var(--acid);
+}
+
+.community-topbar > a:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+@media (max-width: 820px) {
+  .community-topbar > a {
+    justify-self: stretch;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+}
+
+/* Кнопка «Назад» в той же шапке — того же вида, что и «Мой профиль». Внутри
+   окон в стиле Windows 95 она остаётся прежней: там маленькая кнопка уместна. */
+.community-topbar .history-back-button {
+  min-height: 40px;
+  padding: 10px 13px;
+  border: 3px solid var(--ink);
+  border-color: var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--ink);
+  font: 900 12px/1 "Monocraft", "Courier New", monospace;
+  cursor: pointer;
+}
+
+.community-topbar .history-back-button:hover {
+  background: var(--acid);
+}
+
+.community-topbar .history-back-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+@media (max-width: 820px) {
+  .community-topbar .history-back-button {
+    justify-self: stretch;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   21. Вайтлист: голосуют сами «ЗА» и «ПРОТИВ»
+   Отдельные «лайк» и «дизлайк» дублировали счётчики, поэтому голос ставится
+   нажатием на сам счётчик. Раньше это были подписи <b>, теперь кнопки.
+   ---------------------------------------------------------------------------- */
+.candidate-decision button {
+  min-height: 48px;
+  padding: 11px;
+  border: 3px solid var(--ink);
+  color: var(--ink);
+  font: 900 13px/1.2 "Monocraft", monospace;
+  text-align: center;
+  cursor: pointer;
+}
+
+.candidate-decision button.selected {
+  outline: 4px solid #1634bf;
+  outline-offset: -8px;
+}
+
+.candidate-decision button:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+.candidate-decision button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+}
+
+.candidate-decision button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+/* ----------------------------------------------------------------------------
+   22. Видео-инструкция на странице лаунчера
+   ---------------------------------------------------------------------------- */
+/* Ширина и отступ — как у остальных окон страницы (.launcher-hero,
+   .launcher-guides): иначе блок уже соседей и вплотную налезает на инструкции. */
+.launcher-video {
+  width: min(1180px, 100%);
+  margin: 0 auto 24px;
+}
+
+.launcher-video-body {
+  display: grid;
+  gap: 14px;
+  padding: clamp(18px, 3vw, 30px);
+  background: #f8f5e9;
+}
+
+.launcher-video-body h2,
+.launcher-video-body p {
+  margin: 0;
+}
+
+.launcher-video-frame {
+  position: relative;
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  background: #111;
+  /* Кадр 3024×1964: место под видео занято заранее, страница не прыгает при загрузке. */
+  aspect-ratio: 3024 / 1964;
+  overflow: hidden;
+}
+
+.launcher-video-frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #111;
+}
+
+.launcher-video-loading {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 8px 10px;
+  border: 2px solid var(--ink);
+  background: var(--acid);
+  font: 900 11px/1 "Monocraft", monospace;
+  color: var(--ink);
+  pointer-events: none;
+}
+
+.launcher-video-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.launcher-video-controls button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--ink);
+  font: 900 12px/1 "Monocraft", monospace;
+  cursor: pointer;
+}
+
+.launcher-video-controls button:first-child {
+  background: var(--acid);
+}
+
+.launcher-video-controls button:hover {
+  background: var(--cyan);
+}
+
+.launcher-video-controls button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+@media (max-width: 580px) {
+  .launcher-video-controls button {
+    flex: 1 1 auto;
+  }
+}
+
+/* Инструкция появляется под карточками после нажатия «Скачать»
+   (app/launcher/LauncherDownloads.tsx) — мягко, без рывка. */
+.launcher-video-slot > .launcher-video {
+  animation: launcher-video-in 0.35s ease-out both;
+}
+
+@keyframes launcher-video-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher-video-slot > .launcher-video { animation: none; }
+}
+
+/* ----------------------------------------------------------------------------
+   23. Телефоны: без лаунчера и с подсказкой «с компьютера удобнее»
+   Лаунчер ставится только на компьютер, поэтому на сенсорных устройствах
+   ссылки на его страницу нет вовсе (саму страницу телефон тоже не открывает —
+   см. app/launcher/page.tsx).
+   ---------------------------------------------------------------------------- */
+@media (hover: none) and (pointer: coarse) {
+  a[href="/launcher"] {
+    display: none !important;
+  }
+}
+
+.mobile-desktop-hint {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  max-width: 440px;
+  margin: 0 auto;
+  border: 3px solid var(--ink);
+  background: #f8f5e9;
+  box-shadow: 6px 6px 0 var(--ink);
+  animation: mobile-hint-in 220ms ease-out;
+}
+
+.mobile-desktop-hint-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px 6px 12px;
+  background: #1634bf;
+  color: #fff;
+  font: 900 11px/1 "Monocraft", monospace;
+}
+
+.mobile-desktop-hint-bar button {
+  width: 30px;
+  height: 30px;
+  border: 2px solid;
+  border-color: #fff #222 #222 #fff;
+  background: #d4d0c8;
+  color: var(--ink);
+  font: 900 16px/1 "Monocraft", monospace;
+}
+
+.mobile-desktop-hint-body {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+
+.mobile-desktop-hint-body strong {
+  font: 900 15px/1.2 "Monocraft", monospace;
+}
+
+.mobile-desktop-hint-body p {
+  margin: 0;
+  font: 400 12px/1.55 "Monocraft", monospace;
+}
+
+.mobile-desktop-hint-body > button {
+  min-height: 44px;
+  border: 3px solid var(--ink);
+  background: var(--acid);
+  box-shadow: 4px 4px 0 var(--ink);
+  font: 900 13px/1 "Monocraft", monospace;
+  color: var(--ink);
+}
+
+@keyframes mobile-hint-in {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-desktop-hint { animation: none; }
+}
+
+/* Инструкция для Mac больше не нужна (сборка подписана Apple): остаётся одно
+   окно про Windows и Linux — во всю ширину. */
+.launcher-guides {
+  grid-template-columns: 1fr;
+}
+
+/* Компактный переключатель языка в меню главной: RU / EN. */
+.language-switch.is-compact {
+  display: inline-flex;
+  flex: none;
+  align-self: center;
+  position: relative;
+  margin: 8px 10px;
+}
+.language-switch.is-compact .language-switch-options {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 2px solid var(--ink);
+  background: #d4d0c8;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.language-switch.is-compact .language-switch-options button {
+  min-width: 48px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-width: 2px;
+  box-shadow: none;
+  font-size: 12px;
+  color: var(--ink);
+}
+.language-switch-options button:focus-visible {
+  outline: 3px dashed var(--blue);
+  outline-offset: 3px;
+}
+.language-switch.is-compact .language-switch-options button.is-active {
+  background: var(--acid);
+  border-color: #444 #fff #fff #444;
+}
+.language-switch.is-compact .language-switch-options button:not(.is-active):hover {
+  background: var(--cyan);
+}
+.language-switch.is-compact > .form-message {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 250px;
+  max-width: calc(100vw - 40px);
+  padding: 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  font-size: 11px;
+  z-index: 1;
+}
+
+/* Окно согласия: что нового в редакции. */
+.agreement-gate-changes {
+  margin: 0;
+  padding: 12px 14px;
+  border: 3px solid var(--ink);
+  background: #d7ff24;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.agreement-gate-changes strong {
+  font-size: 12px;
+}
+
+.agreement-gate-changes ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.6;
+}

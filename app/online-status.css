@@ -1,0 +1,45 @@
+/* Отметка «В ИГРЕ» — игрок сейчас на сервере Minecraft (lib/minecraft-stats.ts).
+   Используется в профиле, списке игроков и ленте. */
+.pc-online-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: max-content;
+  margin: 6px 0 0;
+  padding: 3px 7px 3px 6px;
+  border: 2px solid var(--ink);
+  background: #9eee86;
+  color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+.pc-online-badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border: 1px solid var(--ink);
+  background: #168b2d;
+}
+
+.player-directory-card .pc-online-badge,
+.feed-post .pc-online-badge {
+  margin: 4px 0 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pc-online-badge::before {
+    animation: pc-online-blink 1.6s steps(2, jump-none) infinite;
+  }
+}
+
+@keyframes pc-online-blink {
+  50% { background: #9eee86; }
+}

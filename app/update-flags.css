@@ -1,0 +1,27 @@
+/* Reuse the exact .flag-* artwork from profiles for both public and admin badges. */
+.version-box.update-flag {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #fff;
+}
+.version-box.update-flag::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+}
+.version-box.update-flag > span {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  padding: 2px 4px;
+  background: rgba(0, 0, 0, .7);
+  color: #fff;
+  overflow-wrap: anywhere;
+  text-shadow: 1px 1px 0 #000;
+}

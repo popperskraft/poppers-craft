@@ -1,0 +1,189 @@
+/* Фанкопопы на карточке игрока (app/players/FunkoShelf.tsx): коробки в духе
+   Funko Pop — цветная упаковка, окошко с фигуркой, номер и надпись снизу. */
+/* r098: раздел стоит под скином, в узкой правой колонке. Видна одна
+   коробка; если фигурок несколько — стрелки и счётчик в заголовке. */
+.player-funko {
+  min-width: 0;
+}
+
+.funko-carousel-head {
+  margin: 6px 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.player-funko h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.funko-carousel-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.funko-carousel-nav button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--ink);
+  background: var(--acid);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+}
+
+.funko-carousel-nav button:hover:not(:disabled) {
+  background: #fff2a6;
+}
+
+.funko-carousel-nav button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.funko-carousel-nav button:disabled {
+  background: #e4e1d6;
+  color: #9a978d;
+  box-shadow: 3px 3px 0 #9a978d;
+  cursor: default;
+}
+
+.funko-carousel-nav button:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.funko-carousel-nav svg {
+  display: block;
+}
+
+.funko-shelf {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+}
+
+/* Лента листается целиком по одной коробке; полосы прокрутки не видно. */
+.funko-shelf.is-carousel {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.funko-shelf.is-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Поля вокруг коробки — место для её тени и свечения у Томаса. */
+.funko-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  padding: 4px 18px 18px;
+  display: grid;
+  justify-items: center;
+  scroll-snap-align: center;
+}
+
+.funko-box {
+  --funko-box: #1c44da;
+  --funko-ink: #fff;
+  width: 150px;
+  display: grid;
+  border: 3px solid var(--ink);
+  background: var(--funko-box);
+  color: var(--funko-ink);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.funko-platon { --funko-box: #ff6fae; --funko-ink: #2a1020; }
+.funko-tomac { --funko-box: #ffc400; --funko-ink: #2a1a00; }
+
+.funko-box-top {
+  padding: 6px 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 8px;
+}
+
+.funko-box-top b {
+  white-space: nowrap;
+  padding: 2px 5px;
+  background: #fff;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.funko-box-top em {
+  margin-left: auto;
+  font-style: normal;
+  font-size: 11px;
+}
+
+.funko-box-window {
+  margin: 0 8px;
+  padding: 10px 0 0;
+  display: grid;
+  place-items: end center;
+  border: 3px solid var(--ink);
+  border-radius: 40px 40px 6px 6px;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgb(0 0 0 / 22%) 0 28%, transparent 30%),
+    linear-gradient(#f2fbff, #c9e7ff);
+}
+
+.funko-box-window canvas {
+  width: 96px;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(3px 3px 0 rgb(0 0 0 / 25%));
+}
+
+.funko-box-label {
+  padding: 8px;
+  display: grid;
+  gap: 4px;
+}
+
+.funko-box-label strong {
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.funko-box-label small {
+  font-size: 7px;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+/* Томас — самый редкий: переливающаяся рамка. */
+.funko-tomac {
+  animation: funko-rare 2.4s linear infinite;
+}
+
+@keyframes funko-rare {
+  0%, 100% { box-shadow: 5px 5px 0 var(--ink), 0 0 0 3px #fff3a0; }
+  50% { box-shadow: 5px 5px 0 var(--ink), 0 0 14px 3px #ffe14d; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .funko-tomac { animation: none; }
+}
+
+/* Подписи коробки — цветом упаковки, а не серым цветом подписей раздела. */
+.player-card .funko-box-label small {
+  color: inherit;
+}

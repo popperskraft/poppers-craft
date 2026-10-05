@@ -1,0 +1,12 @@
+.statusLine, .online {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 4px 9px;
+}
+
+.statusLine > span:first-child { min-width: 0; }
+.online { margin: 8px 0 22px; }
+.online > span:first-child { margin: 0; }
+
+:global(.player-card:is(.theme-night, .theme-nether, .theme-end, .theme-grass)) .presence { color: inherit; }

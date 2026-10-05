@@ -1,0 +1,242 @@
+/* «Настройки профиля → Оформление PLUS». Розовый — фирменный цвет PLUS. */
+
+.plus-studio {
+  display: grid;
+  gap: 14px;
+}
+
+.plus-studio-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.plus-studio-status.is-active { background: var(--plus-pink); box-shadow: 4px 4px 0 var(--plus-accent); }
+.plus-studio-status > div { display: grid; gap: 4px; min-width: 0; }
+.plus-studio-status small { font-size: 9px; letter-spacing: 0.1em; }
+.plus-studio-status strong { font-size: 15px; }
+.plus-studio-status span { font-size: 12px; line-height: 1.5; }
+
+.plus-studio-link {
+  padding: 10px 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 10px;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.plus-studio-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.plus-studio-card > small { font-size: 10px; font-weight: 900; letter-spacing: 0.08em; }
+.plus-studio-card p { margin: 0; font-size: 13px; line-height: 1.6; }
+.plus-studio-note { font-size: 12px; line-height: 1.6; opacity: 0.85; }
+.plus-studio-note a,
+.plus-studio-list a { text-decoration: underline; }
+
+.plus-studio-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 12px; line-height: 1.6; }
+.plus-early-open { padding: 2px 5px; border: 2px solid var(--ink); background: var(--acid); font-size: 9px; }
+.plus-early-soon { padding: 2px 5px; border: 2px solid var(--ink); background: var(--plus-pink); font-size: 9px; }
+
+.plus-tenure { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.plus-tenure .minecraft-icon.mc-png-icon.mc-icon-sm { width: 26px; height: 26px; }
+
+.plus-swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.plus-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 900 10px/1 "Monocraft", ui-monospace, monospace;
+  cursor: pointer;
+}
+
+.plus-swatch i {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--ink);
+  background: var(--plus-pink);
+}
+
+.plus-swatch.active { background: var(--plus-pink); }
+.plus-swatch:disabled { cursor: default; opacity: 0.6; }
+
+/* Образцы цветов совпадают с обводкой на сайте. */
+.plus-swatch.ring-blue i { background: #38bdff; }
+.plus-swatch.ring-lime i { background: #b8ff1f; }
+.plus-swatch.ring-gold i { background: #ffc400; }
+.plus-swatch.ring-violet i { background: #a66bff; }
+.plus-swatch.ring-rainbow i { background: linear-gradient(135deg, #ff3b3b, #ffe600 35%, #3ad84a 60%, #29b6ff 80%, #b45cff); }
+
+.plus-swatch.theme-classic i { background: #f8f5e9; }
+
+@media (max-width: 520px) {
+  .plus-studio-link { width: 100%; text-align: center; }
+}
+
+/* Идёт HYPE — плашка статуса в цветах тарифа. */
+.plus-studio-status.is-active.is-hype {
+  background: linear-gradient(135deg, #0b1160, #2033d8);
+  box-shadow: 4px 4px 0 #6d8bff;
+  color: #f2f5ff;
+}
+.plus-studio-status.is-hype small { color: #9fb4ff; }
+.plus-studio-status.is-hype .plus-studio-link { color: var(--ink, #111); }
+
+/* ---- обзор: предпросмотр карточки и список возможностей ---- */
+.plus-studio-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.plus-studio-overview.is-single { grid-template-columns: minmax(0, 1fr); }
+
+.plus-preview-frame { margin: 0; display: grid; gap: 8px; }
+.plus-preview-frame figcaption { font-size: 9px; font-weight: 900; letter-spacing: 0.1em; }
+
+/* Уменьшенная карточка игрока: те же классы темы и обводки, что у настоящей. */
+.player-card.plus-preview {
+  width: 100%;
+  margin: 0;
+  border: 4px solid var(--ink, #111);
+  box-shadow: 6px 6px 0 var(--ink, #111);
+  overflow: hidden;
+}
+.player-card.plus-preview.is-plus {
+  box-shadow: 0 0 0 4px var(--ring), 0 0 22px 6px var(--ring-glow), 7px 7px 0 4px var(--ink, #111);
+}
+.player-card.plus-preview .player-cover { min-height: 92px; padding: 12px; }
+.player-card.plus-preview .player-card-body { padding: 14px 16px 16px; }
+.player-card.plus-preview .player-handle { margin: 0 0 4px; font-size: 11px; }
+.plus-preview-name { display: block; font-size: 18px; line-height: 1.2; overflow-wrap: anywhere; }
+.plus-preview-badges { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.plus-preview-tenure { background: #fff; }
+.plus-preview-plain { font-size: 11px; opacity: 0.75; }
+
+.plus-perk-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.plus-perk-list li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 8px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+}
+.plus-perk-list li.is-locked { background: #f1f1ee; }
+.plus-perk-list li.is-locked .plus-perk-text { opacity: 0.7; }
+.plus-perk-mark { font-size: 13px; text-align: center; }
+.plus-perk-text { display: grid; gap: 2px; min-width: 0; }
+.plus-perk-text b { font-size: 12px; }
+.plus-perk-text small { font-size: 10px; opacity: 0.75; overflow-wrap: anywhere; }
+.plus-perk-link {
+  padding: 5px 8px;
+  border: 2px solid var(--ink, #111);
+  background: #fff;
+  color: var(--ink, #111);
+  font-size: 9px;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.plus-perk-link.is-static { border-style: dashed; }
+.plus-perk-link.is-upsell { background: #9fb4ff; color: #0b1160; }
+
+@media (max-width: 760px) {
+  .plus-studio-overview { grid-template-columns: minmax(0, 1fr); }
+  .plus-perk-list li { grid-template-columns: 22px minmax(0, 1fr); }
+  .plus-perk-link { grid-column: 2; justify-self: start; }
+}
+.plus-page-sections { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+.plus-pin-picker { display: grid; gap: 10px; min-width: 0; }
+.plus-pin-picker select { min-width: 0; max-width: 100%; padding: 10px; border: 3px solid var(--ink); background: #fff; }
+.plus-page-sections a { padding: 12px; border: 3px solid var(--ink); background: var(--cyan); box-shadow: 3px 3px 0 var(--ink); font-size: 12px; }
+.plus-page-sections a:focus-visible { outline: 3px dashed var(--blue); outline-offset: 4px; }
+.plus-model-panel .models-page { padding: 0; --studio-font: "Monocraft", monospace; }
+.plus-model-panel .models-workspace { grid-template-columns: 190px minmax(240px, 1fr); }
+.plus-model-panel .models-workspace > :last-child { grid-column: 1 / -1; }
+@media (max-width: 700px) {
+  .plus-model-panel .models-workspace { grid-template-columns: minmax(0, 1fr); }
+  .plus-model-panel .models-top { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- выбор темы карточки: плитки-миниатюры ----
+   Каждая плитка — маленькая карточка игрока в цветах темы: полоса шапки,
+   аватар и строки текста. Выбранная — с лаймовой рамкой и «✓ ВЫБРАНА». */
+.plus-theme-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 12px;
+}
+
+.plus-theme-tile {
+  display: grid;
+  gap: 7px;
+  padding: 7px 7px 9px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  color: var(--ink);
+  font: 900 10px/1.2 "Monocraft", ui-monospace, monospace;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.plus-theme-tile:hover:not(:disabled),
+.plus-theme-tile:focus-visible {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.plus-theme-tile.active {
+  outline: 4px solid var(--acid);
+  outline-offset: -1px;
+  background: #fffbe0;
+}
+
+.plus-theme-tile:disabled { cursor: default; opacity: 0.6; }
+
+.plus-theme-tile em {
+  font-style: normal;
+  font-size: 8px;
+  color: #1c8030;
+}
+
+.plus-theme-preview {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  background: #f8f5e9;
+  color: #171717;
+}
+
+.plus-theme-preview i { position: absolute; display: block; background: currentColor; }
+.plus-theme-preview .plus-theme-head { inset: 0 0 auto; height: 24%; background: var(--plus-pink, #ff6fae); border-bottom: 2px solid var(--ink); }
+.plus-theme-preview .plus-theme-face { left: 10%; top: 34%; width: 22%; aspect-ratio: 1; border: 2px solid var(--ink); background: #c8a27a; }
+.plus-theme-preview .plus-theme-line { left: 40%; top: 38%; width: 48%; height: 7%; opacity: 0.85; }
+.plus-theme-preview .plus-theme-line.is-short { top: 54%; width: 30%; opacity: 0.6; }
+
+/* Фоны плиток тем — в app/card-themes.css (r098), вместе с фонами карточки. */

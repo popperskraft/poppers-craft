@@ -1,0 +1,206 @@
+/* Scoped UI polish; keep existing site colours, hard borders and Monocraft. */
+.review-author-link { color: var(--ink); font-weight: 900; text-decoration: underline; text-underline-offset: 5px; max-width: 100%; overflow-x: auto; white-space: nowrap; }
+.review-author-link:hover { color: #166c2a; }
+.review-author-link:focus-visible, .player-social-icon:focus-visible { outline: 3px solid #1d44de; outline-offset: 4px; }
+.player-social-icons { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 18px; }
+.player-social-icon { display: grid; place-items: center; width: 64px; height: 64px; flex: 0 0 64px; }
+.player-social-icon .social-pixel-icon { width: 58px; height: 58px; }
+.player-social-icon:hover { transform: translate(-2px, -2px); }
+.player-page-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 16px; margin-bottom: 22px; }
+.player-page-toolbar .player-page-nav { margin: 0; gap: 12px; }
+.player-directory-nav { display: flex; flex-wrap: wrap; gap: 12px; min-width: 0; }
+.player-page-toolbar .player-page-nav a,
+.player-page-toolbar .history-back-button,
+.player-page-toolbar .player-settings-link,
+.player-directory-page .community-topbar a,
+.player-directory-page .community-topbar .history-back-button {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 54px; padding: 13px 16px;
+  border: 3px solid var(--ink); background: #fff; color: var(--ink); box-shadow: 4px 4px 0 var(--ink);
+  font: 400 16px/1.4 "Monocraft", monospace; text-shadow: none; text-decoration: none; text-align: center; cursor: pointer;
+}
+.player-page-toolbar .player-page-nav .player-cover-feed,
+.player-directory-page .community-topbar .player-cover-feed { background: var(--cyan); }
+/* Того же размера, что «Назад» и «Список игроков»: одна строка, без переноса (r099). */
+.player-page-toolbar .player-settings-link { background: var(--acid); justify-self: end; align-self: start; white-space: nowrap; }
+.player-page-toolbar a:hover, .player-page-toolbar button:hover,
+.player-directory-page .community-topbar a:hover, .player-directory-page .community-topbar button:hover { background: #fff2a6; }
+.player-page-toolbar a:focus-visible, .player-page-toolbar button:focus-visible,
+.player-directory-page .community-topbar a:focus-visible, .player-directory-page .community-topbar button:focus-visible { outline: 3px solid var(--blue); outline-offset: 5px; }
+.player-directory-page .community-topbar { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+.player-directory-page .community-topbar > a { white-space: normal; }
+/* Раскладка карточки (r098, r100). Имя и скин (с рейтингом) рядом, «о себе»,
+   музыка, фильмы и контакты — на всю ширину под ними: длинный текст в узкой
+   левой колонке оставлял справа пустоту (замечание владельца, 2026-10-03).
+   Обёртки колонок растворяются (display: contents); вариант с колонкой
+   под скином (has-side) был для FANKOPOP, который с сайта убран. */
+.player-card .player-identity-row {
+  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-areas: "copy skin" "facts facts" "socials socials";
+  gap: 26px clamp(18px, 4vw, 40px);
+}
+/* Селекторы с .player-identity-row: в собранном CSS text-containment.css идёт
+   после этого файла, и его «grid-column: 1» / «grid-row: 1 / span 2» иначе
+   перебивали раскладку (из-за этого «о себе» и стояло в левой колонке). */
+.player-card .player-identity-row > :is(.player-main-col, .player-side-col) { display: contents; }
+.player-card .player-identity-row .player-identity-copy { grid-area: copy; }
+.player-card .player-identity-row .player-skin-rating-column { grid-area: skin; width: 100%; }
+.player-card .player-identity-row .player-identity-facts { grid-area: facts; }
+.player-card .player-identity-row .player-socials { grid-area: socials; margin-top: 0; }
+.player-card .player-identity-row.has-side { grid-template-areas: "main side"; }
+.player-card .player-identity-row.has-side > :is(.player-main-col, .player-side-col) { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+.player-card .player-identity-row.has-side > .player-main-col { grid-area: main; }
+.player-card .player-identity-row.has-side > .player-side-col { grid-area: side; }
+.player-skin-rating-column .player-rating-summary { width: min(170px, 100%); }
+.player-last-seen { display: grid; gap: 4px; margin: 8px 0 22px; color: #555; font-size: 12px; line-height: 1.6; }
+.player-last-seen time { font-size: inherit; }
+.player-card h1.player-name-fit { max-width: 100%; overflow-x: auto; overflow-y: hidden; white-space: nowrap; overflow-wrap: normal; word-break: normal; line-height: 1.25; margin-bottom: 20px; }
+.player-name-fit > span { display: inline-block; max-width: none; white-space: nowrap; font-size: 40px; }
+.player-handle { overflow-x: auto; white-space: nowrap; overflow-wrap: normal; }
+.feed-post-author strong, .feed-post-author small { display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Preserve the artwork's exact 4:1 frame; overlay text cannot enlarge it. */
+.player-directory-grid .player-directory-card { grid-template-rows: minmax(210px, 1fr) auto; }
+.player-directory-skin-slot { display: grid; align-content: center; justify-items: center; min-width: 0; }
+.player-directory-skin-slot > .pc-online-badge { margin: 0 8px 12px; }
+.player-directory-grid .player-directory-card > .player-directory-header { width: 100%; height: auto; min-height: 0; aspect-ratio: 4 / 1; display: block; padding: 0; border: 0; box-shadow: none; color: #fff; text-shadow: 1px 0 #000, -1px 0 #000, 0 1px #000, 0 -1px #000, 2px 2px #000; }
+.player-directory-card .player-directory-header .profile-header-art { object-fit: fill; }
+.player-directory-card .player-directory-header > .player-directory-names { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: center; gap: 1px; padding: 4px 8px; }
+.player-directory-names > strong, .player-directory-names > span { display: block; flex: 0 0 auto; min-width: 0; max-width: 100%; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-directory-card .player-directory-names > strong { font-size: 16px; }
+.player-directory-card .player-directory-names > span { font-size: 12px; }
+.profile-skin-viewer { width: 100%; border: 0; background: transparent; box-shadow: none; }
+.skin-view-switch { display: flex; justify-content: center; gap: 12px; padding: 8px 0 4px; }
+.skin-view-switch button { display: grid; place-items: center; width: 46px; height: 46px; padding: 7px; border: 2px solid var(--ink); background: #f8f5e9; color: var(--ink); box-shadow: 3px 3px 0 var(--ink); cursor: pointer; }
+.skin-view-switch svg { display: block; width: 28px; height: 28px; }
+.skin-view-switch button[aria-pressed="true"] { background: var(--cyan); box-shadow: inset 2px 2px #fff, 3px 3px 0 var(--ink); }
+.skin-view-switch button:hover { background: var(--acid); }
+.skin-view-switch button:focus-visible { outline: 3px solid #1d44de; outline-offset: 4px; }
+.skin-view-stage { min-height: 300px; display: grid; place-items: center; }
+.skin-view-stage > p { padding: 15px; font-size: 12px; }
+.skin-3d-view { width: 100%; }
+.skin-3d-canvas { position: relative; height: 300px; width: 100%; }
+.skin-3d-canvas canvas { display: block; touch-action: none; cursor: grab; }
+.skin-3d-canvas canvas:active { cursor: grabbing; }
+.skin-3d-canvas canvas:focus-visible { outline: 2px dashed var(--blue); outline-offset: 2px; }
+.skin-3d-canvas p { position: absolute; inset: 0; z-index: 1; margin: 0; display: grid; align-content: center; padding: 12px; font-size: 12px; text-align: center; background: transparent; }
+.skin-3d-retry { display: block; margin: 0 auto 12px; padding: 10px; min-height: 44px; border: 3px solid var(--ink); background: var(--acid); color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
+.skin-3d-retry:focus-visible { outline: 3px solid #1d44de; outline-offset: 3px; }
+.candidate-vote-actions button.candidate-like, .candidate-vote-actions button.candidate-like.selected { background: #1d8036; color: #fff; }
+.candidate-vote-actions button.candidate-dislike, .candidate-vote-actions button.candidate-dislike.selected { background: #b72c26; color: #fff; }
+.candidate-vote-actions button[aria-pressed="true"] { outline: 4px solid var(--ink); outline-offset: 4px; box-shadow: inset 0 0 0 3px #fff; }
+.candidate-vote-actions button:focus-visible { outline: 4px solid #1d44de; outline-offset: 4px; }
+.feed-file-picker { position: relative; display: grid; place-items: center; min-height: 56px; padding: 12px; border: 3px solid var(--ink); background: var(--cyan); box-shadow: 4px 4px 0 var(--ink); cursor: pointer; text-align: center; }
+.feed-file .feed-file-picker input { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; margin: 0; opacity: 0; cursor: pointer; }
+.feed-file-picker:focus-within { outline: 3px solid #1d44de; outline-offset: 4px; }
+.feed-file-name { font-size: 12px; overflow-wrap: anywhere; }
+.profile-page .profile-window { width: min(1160px, 100%); }
+.profile-page .profile-content { padding: clamp(14px, 3vw, 36px); }
+.profile-content > h1 { font-size: clamp(28px, 5vw, 60px); line-height: 1.15; }
+.profile-settings-layout { display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: 24px; margin-top: 28px; align-items: start; }
+.profile-settings-nav { display: grid; gap: 12px; position: sticky; top: 100px; }
+.profile-settings-nav button { padding: 16px 12px; min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border: 3px solid var(--ink); background: #d4d0c8; color: var(--ink); box-shadow: 4px 4px 0 var(--ink); font: 14px/1.5 "Monocraft", monospace; text-align: left; cursor: pointer; }
+.profile-settings-nav button[aria-pressed="true"] { background: var(--cyan); }
+.profile-settings-nav button:focus-visible { outline: 3px solid #1d44de; outline-offset: 3px; }
+.profile-settings-nav p { padding: 8px; font-size: 11px; line-height: 1.7; }
+.profile-settings-panels { min-width: 0; }
+.profile-settings-panels > [hidden] { display: none !important; }
+.profile-settings-panels > div > .profile-password:first-child { margin-top: 0; }
+.profile-settings-panels .profile-password { padding: clamp(12px, 2vw, 22px); }
+.profile-settings-panels .profile-password h2 { font-size: clamp(22px, 3.2vw, 34px); line-height: 1.25; }
+.profile-settings-panels .profile-password > p { line-height: 1.8; }
+.profile-edit-group { border: 3px solid var(--ink); background: #f8f5e9; min-width: 0; }
+.profile-edit-group summary { padding: 15px 12px; background: #e2eef1; font-size: 14px; line-height: 1.6; cursor: pointer; }
+.profile-edit-group[open] > summary { border-bottom: 3px solid var(--ink); background: #fff2a6; }
+.profile-edit-fields { display: grid; gap: 16px; padding: 16px; min-width: 0; }
+.profile-edit-group .profile-social-editor { margin: 0; padding: 16px; border: 0; min-width: 0; }
+.profile-edit-group .profile-social-editor legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.profile-edit-group .profile-social-editor p { font-size: 12px; line-height: 1.7; margin: 0 0 16px; }
+.profile-edit-group .profile-social-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.social-contact-field { min-width: 0; display: grid; align-content: start; gap: 8px; }
+.social-contact-field input { width: 100%; }
+.social-contact-field > a { width: fit-content; color: #124d6c; font-size: 10px; line-height: 1.6; text-decoration: underline; text-underline-offset: 3px; }
+.social-contact-warning { color: #8a231a; font-size: 11px; line-height: 1.6; }
+.profile-save-bar { position: sticky; bottom: 12px; z-index: 5; padding: 12px; border: 3px solid var(--ink); background: #d4d0c8; box-shadow: 4px 4px 0 var(--ink); }
+.profile-save-bar > button { width: 100%; }
+.profile-save-bar .form-message { margin: 12px 0 0; font-size: 12px; line-height: 1.6; }
+.community-cover-preview b, .community-cover-preview span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 800px) {
+  .profile-settings-layout { grid-template-columns: 1fr; gap: 20px; }
+  .profile-settings-nav { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profile-settings-nav button { min-height: 64px; font-size: 12px; }
+  .profile-settings-nav p { grid-column: 1 / -1; margin: 0; }
+  .profile-identity { grid-template-columns: 1fr 1fr; }
+  .profile-identity > div:last-child { grid-column: 1 / -1; }
+  .player-page-toolbar { grid-template-columns: 1fr; }
+  .player-page-toolbar .player-settings-link { grid-row: 1; }
+  .player-card .player-identity-row { grid-template-columns: minmax(0, 1fr) 210px; column-gap: 22px; }
+  .player-directory-page .community-topbar { position: static; grid-template-columns: minmax(0, 1fr) auto; }
+  .player-directory-page .community-topbar > strong { grid-column: 1 / -1; grid-row: 1; text-align: center; }
+}
+@media (max-width: 580px) {
+  /* Одна колонка: имя, скин, «о себе», контакты. */
+  .player-card .player-identity-row,
+  .player-card .player-identity-row.has-side { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "skin" "facts" "socials"; }
+  .player-card .player-identity-row.has-side > :is(.player-main-col, .player-side-col) { display: contents; }
+  .player-card .player-identity-row .player-skin-rating-column { width: min(270px, 100%); justify-self: center; margin-top: 0; }
+  .player-page-toolbar .player-page-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .player-page-toolbar .player-page-nav a, .player-page-toolbar .history-back-button { font-size: 14px; padding: 10px; }
+  .player-directory-page .community-topbar { grid-template-columns: 1fr; }
+  .player-directory-page .community-topbar > a { justify-self: stretch; }
+  .player-directory-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .player-directory-nav .player-cover-feed { grid-column: 1 / -1; }
+  .profile-edit-group .profile-social-grid, .community-style-row { grid-template-columns: 1fr; }
+  .profile-edit-fields, .profile-edit-group .profile-social-editor { padding: 12px; }
+  .profile-identity { grid-template-columns: 1fr; }
+  .profile-identity > div:last-child { grid-column: auto; }
+  .profile-save-bar { bottom: 8px; }
+}
+
+/* r087: кнопка «Настроить шапку» прямо на шапке в настройках профиля. */
+.community-cover-preview { position: relative; }
+.community-cover-preview .cover-settings-button {
+  position: absolute; top: 10px; right: 10px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 10px; border: 3px solid var(--ink); background: #fff; color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink); text-shadow: none; font: inherit; font-size: 10px; font-weight: 900; cursor: pointer;
+}
+.community-cover-preview .cover-settings-button:hover { background: var(--acid); }
+.community-cover-preview .cover-settings-button:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+.community-cover-preview .cover-settings-button span { max-width: none; overflow: visible; }
+.profile-header-settings { scroll-margin-top: 16px; }
+@media (max-width: 520px) {
+  .community-cover-preview:has(.cover-settings-button) { min-height: 158px; }
+  .community-cover-preview .cover-settings-button { top: 8px; right: 8px; padding: 5px 8px; font-size: 9px; }
+}
+
+/* r087: вайтлист — сколько анкет ждут голоса и метка на карточке. */
+/* Текст длиннее прежнего: остаётся рядом с книгой, а не уходит под неё. */
+.admin-rule-banner.whitelist-how { flex-wrap: nowrap; align-items: flex-start; font-size: 11px; }
+.whitelist-how > span { min-width: 0; }
+.whitelist-how b { white-space: normal; }
+.whitelist-to-vote { margin: 0 0 16px; padding: 12px 14px; border: 3px solid var(--ink); background: var(--pink); color: #fff; box-shadow: 4px 4px 0 var(--ink); font-size: 12px; font-weight: 900; text-shadow: 1px 1px 0 var(--ink); }
+.whitelist-to-vote.is-done { background: #e7ffd7; color: var(--ink); text-shadow: none; }
+.candidate-titlebar:has(.candidate-needs-vote) { grid-template-columns: auto 1fr auto auto; }
+.candidate-needs-vote { padding: 7px 9px; border: 2px solid var(--ink); background: var(--pink); color: #fff; font-size: 10px; white-space: nowrap; }
+@media (max-width: 760px) {
+  .candidate-titlebar:has(.candidate-needs-vote) { grid-template-columns: 1fr auto; }
+  .candidate-needs-vote { grid-column: 1 / -1; grid-row: 3; width: fit-content; }
+}
+
+/* r100: «Игровой ник» и «Почта» в настройках аккаунта. Раньше сетка была на
+   три колонки, почта попадала в узкую среднюю и переносилась посреди адреса.
+   Теперь ник занимает сколько нужно, а почта — всё оставшееся место;
+   на узком экране блоки встают друг под друга. */
+.profile-content .profile-identity {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.profile-content .profile-identity > div {
+  flex: 0 1 240px;
+}
+
+.profile-content .profile-identity > div:last-child {
+  flex: 1 1 280px;
+}
+

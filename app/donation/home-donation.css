@@ -1,0 +1,16 @@
+/* Блок доната/PLUS на главной: отметка «пропуск уже есть» вместо кнопки
+   покупки. Выглядит как кнопка, но не нажимается — это сравнение. */
+.donation-copy .donation-action.is-owned {
+  background: #fff;
+  color: #111;
+  border-style: dashed;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* Кнопки PLUS в блоке доната — розовые, как окно plus.exe. */
+.donation-copy .donation-action.plus {
+  background: var(--plus-pink);
+  border-color: #fff;
+  color: #15151a;
+}

@@ -1,0 +1,112 @@
+import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
+import { PwaRegistration } from "./PwaRegistration";
+import { PlatformUpdateToast } from "./PlatformUpdateToast";
+import { CookieConsent } from "./CookieConsent";
+import { BugReport } from "./BugReport";
+import { PoppersAssistant } from "./PoppersAssistant";
+import { GrammarAssistant } from "./GrammarAssistant";
+import { SiteCrashGuard } from "./SiteCrashGuard";
+import { NavigationHistory } from "./NavigationHistory";
+import { SiteRatingPrompt } from "./SiteRatingPrompt";
+import { ErrorMonitor } from "./ErrorMonitor";
+import { getSiteSettings, getViewerIdentity } from "@/lib/waitlist";
+import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#1c44da",
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const host =
+    requestHeaders.get("x-forwarded-host") ??
+    requestHeaders.get("host") ??
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/^https?:\/\//, "") ??
+    "popperscraft.vercel.app";
+  const protocol =
+    requestHeaders.get("x-forwarded-proto") === "http" ? "http" : "https";
+  let metadataBase: URL;
+  try {
+    metadataBase = new URL(`${protocol}://${host}`);
+  } catch {
+    metadataBase = new URL(
+      process.env.NEXT_PUBLIC_SITE_URL ?? "https://popperscraft.vercel.app",
+    );
+  }
+
+  const title = "PoppersCraft - minecraft server";
+  const description = "ВАНИЛЬНО — НЕ ДОНАТНАЯ ПОМОЙКА.";
+
+  return {
+    metadataBase,
+    title,
+    description,
+    manifest: "/manifest.webmanifest",
+    applicationName: "PoppersCraft",
+    alternates: { canonical: "/" },
+    appleWebApp: {
+      capable: true,
+      title: "PoppersCraft",
+      statusBarStyle: "black-translucent",
+    },
+    icons: {
+      icon: "/popperscraft-p.svg?v=2",
+      shortcut: "/popperscraft-p.svg?v=2",
+      apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      images: [{ url: "/og.png", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.png"],
+    },
+  };
+}
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  let crashModeActive = false;
+  let ratingPromptId: string | null = null;
+  try {
+    const [settings, viewer] = await Promise.all([
+      getSiteSettings(),
+      getViewerIdentity(),
+    ]);
+    const isOwner = viewer?.adminProfile?.role === "owner";
+    crashModeActive = settings.crashMode && !isOwner;
+    ratingPromptId = settings.ratingPromptId;
+  } catch {
+    // A settings outage must not make the public site unavailable.
+  }
+
+  return (
+    <html lang="ru">
+      <body className={crashModeActive ? "site-crash-mode" : undefined}>
+        <ErrorMonitor />
+        <NavigationHistory />
+        {children}
+        <PlatformUpdateToast />
+        <PwaRegistration />
+        <CookieConsent />
+        <BugReport />
+        <PoppersAssistant />
+        <GrammarAssistant />
+        <SiteCrashGuard initialActive={crashModeActive} />
+        <SiteRatingPrompt initialPromptId={ratingPromptId} />
+      </body>
+    </html>
+  );
+}

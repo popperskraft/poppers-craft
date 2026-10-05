@@ -1,0 +1,34 @@
+/* Larger shared item sizes; original PNGs stay square, sharp and uncropped. */
+.minecraft-icon.mc-png-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  object-position: center;
+  aspect-ratio: 1;
+  image-rendering: pixelated;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  max-width: none;
+}
+.minecraft-icon.mc-png-icon.mc-icon-sm { width: 32px; height: 32px; }
+.minecraft-icon.mc-png-icon.mc-icon-lg { width: 96px; height: 96px; }
+
+/* Title bars keep their established height, with a larger 28px item inside. */
+.window-bar .mc-png-icon.mc-icon-sm { width: 28px; height: 28px; }
+.wiki-card h2 { min-width: 0; overflow-wrap: anywhere; }
+
+/* Leave breathing room around the enlarged items in existing controls. */
+.builder-emojis.minecraft-item-picker button { width: 44px; height: 44px; }
+.hero .toolbox { width: 92px; flex-basis: 92px; }
+
+.builder-emojis.minecraft-item-picker { max-height: 216px; overflow-y: auto; }
+.minecraft-item-picker button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+@media (max-width: 760px) {
+  .hero .toolbox { width: 48px; flex-basis: 48px; }
+}
+@media (max-width: 480px) {
+  .minecraft-icon.mc-png-icon.mc-icon-md { width: 40px; height: 40px; }
+  .minecraft-icon.mc-png-icon.mc-icon-lg { width: 80px; height: 80px; }
+}

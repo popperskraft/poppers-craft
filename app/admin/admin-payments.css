@@ -1,0 +1,360 @@
+/* «Управление → Оплата». */
+.admin-payments-status {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.admin-payments-status article {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.admin-payments-status article:first-child {
+  grid-column: 1 / -1;
+}
+
+.admin-payments-status article.ok {
+  background: #f2ffd6;
+}
+
+.admin-payments-status article.warn {
+  background: #fff2a6;
+}
+
+.admin-payments-status small {
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.admin-payments-status strong {
+  font-size: 22px;
+}
+
+.admin-payments-status span {
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.admin-payments-toggles {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.admin-payments-toggles article {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+}
+
+.admin-payments-toggles article > div {
+  flex: 1 1 320px;
+}
+
+.admin-payments-toggles h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.admin-payments-toggles p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.admin-payments-toggles button,
+.admin-payments-grant button {
+  min-width: 140px;
+  padding: 10px 12px;
+  border: 3px solid var(--ink);
+  background: #ffc4c4;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.admin-payments-toggles button.on {
+  background: var(--acid);
+}
+
+.admin-payments-toggles button:disabled,
+.admin-payments-grant button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.admin-payments-toggles > small {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.admin-payments-grant {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.admin-payments-grant label {
+  display: grid;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.admin-payments-grant input {
+  padding: 8px;
+  border: 3px solid var(--ink);
+  font: inherit;
+}
+
+.admin-payments-grant button {
+  background: var(--cyan);
+}
+
+.admin-payments-tables {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.admin-payments-tables h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.admin-payments-tables section {
+  overflow-x: auto;
+}
+
+.admin-payments-tables table {
+  width: 100%;
+  margin-bottom: 16px;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.admin-payments-tables th,
+.admin-payments-tables td {
+  padding: 6px 8px;
+  border: 2px solid var(--ink);
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-payments-tables th {
+  background: #f2df91;
+}
+
+.admin-payments-tables td.succeeded {
+  background: #f2ffd6;
+}
+
+.admin-payments-tables td.canceled,
+.admin-payments-tables td.failed {
+  background: #ffe3e3;
+}
+
+/* Первые 10 игроков: места, пропуск и PLUS на год в подарок. */
+.admin-payments-founders {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+}
+
+.admin-payments-founders h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.admin-payments-founders > p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.admin-payments-founders ol {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-payments-founders li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 8px;
+  border: 2px solid var(--ink);
+  font-size: 12px;
+}
+
+.admin-payments-founders li.gift {
+  background: #e2f5ff;
+}
+
+.admin-payments-founders li.empty {
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.admin-payments-founders li b {
+  min-width: 26px;
+}
+
+.admin-payments-founders li strong {
+  flex: 1 1 140px;
+  overflow-wrap: anywhere;
+}
+
+.admin-payments-founders li span {
+  font-size: 11px;
+}
+
+.admin-payments-founders li button {
+  margin-left: auto;
+  padding: 7px 10px;
+  border: 3px solid var(--ink);
+  background: var(--acid);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.admin-payments-founders li button.undo {
+  background: #ffc4c4;
+}
+
+.admin-payments-founders li button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ранний доступ: кому открыта новая функция. */
+.admin-payments-founders li select {
+  margin-left: auto;
+  padding: 7px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  font: 900 10px/1 "Monocraft", ui-monospace, monospace;
+}
+
+/* Ручная выдача PLUS: то же поле с ником плюс срок. */
+.admin-payments-grant.plus {
+  align-items: flex-end;
+  padding: 12px;
+  border: 3px solid var(--ink);
+  background: #fff4f8;
+  box-shadow: 4px 4px 0 rgba(255, 111, 174, 0.65);
+}
+
+.admin-payments-grant.plus button {
+  background: #ff6fae;
+  color: #2a0a1a;
+}
+
+.admin-payments-grant.plus button.undo {
+  background: #d8d5ce;
+  color: var(--ink);
+  min-width: 100px;
+}
+
+.admin-payments-grant select {
+  padding: 8px;
+  border: 3px solid var(--ink);
+  font: inherit;
+  background: #fff;
+}
+
+.admin-payments-grant.plus p {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  font-size: 10px;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* Промокоды. */
+.admin-promo-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 10px 0 14px;
+}
+
+.admin-promo-form label {
+  display: grid;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.admin-promo-form input,
+.admin-promo-form select {
+  padding: 7px;
+  border: 3px solid var(--ink);
+  font: inherit;
+  background: #fff;
+}
+
+.admin-promo-form input[type="number"] { width: 90px; }
+.admin-promo-note { flex: 1 1 200px; }
+.admin-promo-note input { width: 100%; }
+
+.admin-promo-form button {
+  padding: 9px 12px;
+  border: 3px solid var(--ink);
+  background: #ff6fae;
+  color: #2a0a1a;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.admin-promo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.admin-promo-table th,
+.admin-promo-table td {
+  padding: 6px 8px;
+  border: 2px solid var(--ink);
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-promo-table th { background: #ffe1ee; }
+.admin-promo-table tr.off { opacity: 0.55; }
+.admin-promo-table small { font-weight: 400; }
+
+.admin-promo-table button {
+  padding: 5px 8px;
+  border: 2px solid;
+  border-color: #fff #222 #222 #fff;
+  background: #d8d5ce;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+}

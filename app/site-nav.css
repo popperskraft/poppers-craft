@@ -1,0 +1,235 @@
+/* Общая шапка и меню аккаунта (app/SiteHeader.tsx, app/ProfileMenu.tsx,
+   lib/site-navigation.ts). Подключается последним в app/layout.tsx. */
+
+/* На внутренних страницах шапка стоит в начале страницы, а не закреплена
+   поверх: ниже у ленты, игроков и других страниц своя липкая панель. */
+.site-header.site-header-inner {
+  position: relative;
+}
+
+/* Раздел, в котором находится человек. */
+.main-nav a[aria-current="page"] {
+  background: var(--acid);
+  outline: 3px solid var(--ink);
+  outline-offset: -3px;
+}
+
+/* Меню аккаунта, открытое касанием (на телефоне нет наведения). */
+.header-profile-menu.is-open .header-profile-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+.header-profile-menu > button.header-login-button {
+  cursor: pointer;
+}
+
+/* У администратора в меню шесть пунктов — делаем их уже, чтобы шапка
+   помещалась на ноутбуках до перехода в кнопку «меню» (1180px). */
+@media (min-width: 1181px) {
+  .main-nav:has(> a:nth-of-type(6)) a {
+    min-width: 78px;
+    padding: 0 8px;
+  }
+}
+
+/* r100: «Список игроков» в шапке. У администратора шесть пунктов — на
+   ширине 1181–1279px они не помещались и переносились по слогам: уже шрифт
+   и отступы, текст в одну строку. */
+@media (min-width: 1181px) and (max-width: 1279px) {
+  .site-header .main-nav:has(> a:nth-of-type(6)) a {
+    min-width: 0;
+    padding: 0 7px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}
+
+/* Меню аккаунта по ширине самого длинного пункта: раньше оно было шириной
+   кнопки «ПРОФИЛЬ», и в сжатой шапке «МОЙ ПРОФИЛЬ» вылезал за рамку. */
+.header-profile-dropdown {
+  width: max-content;
+}
+
+/* r100: под «ПРОФИЛЬ» только «ВЫЙТИ» — той же ширины и высоты, что и сама
+   кнопка: «ВЫЙТИ» берёт размеры .header-login-button на всех ширинах экрана,
+   а цвет остаётся серым. */
+.header-profile-dropdown .header-login-button.header-profile-logout {
+  width: 100%;
+  border-color: #fff #222 #222 #fff;
+  background: #d8d5ce;
+  color: #111;
+  text-align: center;
+}
+
+.header-profile-dropdown .header-login-button.header-profile-logout:hover,
+.header-profile-dropdown .header-login-button.header-profile-logout:focus-visible {
+  background: #ffea55;
+}
+
+/* Сжатая шапка главной (40px): переключатель языка и меню аккаунта
+   уменьшаются вместе с остальными кнопками. Только на компьютере — на
+   телефоне переключатель живёт в выпадающем меню. */
+@media (min-width: 761px) {
+  .site-header .language-switch.is-compact,
+  .site-header .language-switch.is-compact .language-switch-options,
+  .site-header .language-switch.is-compact .language-switch-options button {
+    transition: margin .28s ease, padding .28s ease, min-width .28s ease, min-height .28s ease, font-size .28s ease;
+  }
+
+  .site-header.is-compact .language-switch.is-compact {
+    margin: 0 8px;
+  }
+
+  .site-header.is-compact .language-switch.is-compact .language-switch-options {
+    gap: 2px;
+    padding: 2px;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .site-header.is-compact .language-switch.is-compact .language-switch-options button {
+    min-width: 30px;
+    min-height: 26px;
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+
+  .site-header.is-compact .header-profile-item {
+    padding: 6px 10px;
+    font-size: 9px;
+  }
+}
+
+/* ---- r087: анкеты в вайтлисте, которые ждут голоса игрока ---- */
+.main-nav a.has-nav-badge {
+  grid-auto-flow: column;
+  column-gap: 6px;
+}
+
+.nav-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  display: inline-grid;
+  place-items: center;
+  border: 2px solid var(--ink);
+  background: var(--pink);
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.mobile-menu-button {
+  position: relative;
+}
+
+.nav-badge-dot {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--ink);
+  background: var(--pink);
+}
+
+/* Полоска — продолжение шапки: та же подложка и та же нижняя линия, поэтому
+   фон страницы (трава на /donation, лента) начинается сразу под ними и не
+   съезжает (замечание владельца, 2026-10-03). */
+.whitelist-nudge-band {
+  position: relative;
+  z-index: 2;
+  padding: 2px 0 12px;
+  border-bottom: 3px solid var(--ink);
+  background: #f1eee2;
+}
+
+.site-header.site-header-inner:has(+ .whitelist-nudge-band) {
+  border-bottom: 0;
+}
+
+.whitelist-nudge {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  border: 3px solid var(--ink);
+  background: #ffe761;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.whitelist-nudge p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.whitelist-nudge p b {
+  font-size: 12px;
+}
+
+.whitelist-nudge-link {
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  background: var(--acid);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.whitelist-nudge-link:hover,
+.whitelist-nudge-link:focus-visible {
+  background: #fff;
+}
+
+.whitelist-nudge-close {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.whitelist-nudge-close:focus-visible,
+.whitelist-nudge-link:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .whitelist-nudge {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .whitelist-nudge p {
+    grid-column: 2 / 4;
+  }
+
+  .whitelist-nudge > :first-child {
+    grid-row: 1;
+  }
+
+  .whitelist-nudge-link {
+    grid-column: 1 / 3;
+    text-align: center;
+  }
+
+  .whitelist-nudge-close {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}

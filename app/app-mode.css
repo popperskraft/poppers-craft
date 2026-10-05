@@ -1,0 +1,135 @@
+/* Режим приложения PoppersCraft для iPhone.
+
+   Приложение открывает страницы сайта во встроенном браузере и помечает
+   документ атрибутом html[data-pc-app="ios"] ещё до первой отрисовки. Всё,
+   что ниже, действует только при этом атрибуте — в обычном браузере сайт не
+   меняется.
+
+   Приложение само рисует заголовок окна, кнопку «назад», нижнюю панель,
+   помощника и отчёт об ошибке. Поэтому дубли сайта скрыты, декоративные
+   анимации выключены, а поля страниц уменьшены под экран телефона.
+
+   html[data-pc-app-view] — страница открыта ради одной части:
+   login     — только окно входа (вход через Telegram);
+   assistant — только панель помощника Попперса. */
+
+/* ---------- Дубли интерфейса приложения ---------- */
+
+html[data-pc-app] .site-header,
+html[data-pc-app] .site-header-spacer,
+html[data-pc-app] .site-footer,
+html[data-pc-app] .desktop-noise,
+html[data-pc-app] .platform-update-toast,
+html[data-pc-app] .bug-report-button,
+html[data-pc-app] .history-back-button,
+html[data-pc-app] .rating-prompt-backdrop,
+html[data-pc-app] .screenshot-shield {
+  display: none !important;
+}
+
+html[data-pc-app]:not([data-pc-app-view="assistant"]) .poppers-assistant-button,
+html[data-pc-app]:not([data-pc-app-view="assistant"]) .poppers-assistant-panel {
+  display: none !important;
+}
+
+/* Первая полоса-заголовок страницы повторяет заголовок приложения. */
+html[data-pc-app] :is(
+  .wiki-window,
+  .wiki-reader-window,
+  .profile-window,
+  .rules-window,
+  .cookies-info-window,
+  .member-window,
+  .launcher-hero
+) > .window-bar {
+  display: none;
+}
+
+/* ---------- Без тяжёлых анимаций ---------- */
+
+html[data-pc-app] *,
+html[data-pc-app] *::before,
+html[data-pc-app] *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-pc-app] {
+  scroll-padding-top: 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Поля страниц под экран телефона ---------- */
+
+@media (max-width: 760px) {
+  html[data-pc-app] :is(
+    .wiki-page,
+    .profile-page,
+    .rules-page,
+    .cookies-info-page,
+    .launcher-page,
+    .member-page,
+    .player-page
+  ) {
+    min-height: 0;
+    padding: 12px 10px 28px;
+  }
+
+  html[data-pc-app] .admin-shell {
+    padding: 14px 10px 40px;
+  }
+
+  html[data-pc-app] :is(.wiki-window, .rules-window, .player-card) {
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  /* Липкая полоса ленты и игроков: без кнопки «назад» ей хватает одной строки. */
+  html[data-pc-app] .community-topbar {
+    min-height: 0;
+    padding: 8px 10px;
+    grid-template-columns: 1fr auto;
+  }
+}
+
+/* ---------- Только окно входа ---------- */
+
+html[data-pc-app-view="login"] main > :not(.login-dialog) {
+  display: none !important;
+}
+
+html[data-pc-app-view="login"] body {
+  min-height: 100dvh;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 50%, transparent 50%) 0 0 / 8px 8px,
+    #74b64b;
+}
+
+html[data-pc-app-view="login"] .login-dialog::backdrop {
+  background: transparent;
+}
+
+/* ---------- Только помощник Попперса ---------- */
+
+html[data-pc-app-view="assistant"] body > :not(.poppers-assistant-panel) {
+  visibility: hidden !important;
+}
+
+html[data-pc-app-view="assistant"] .poppers-assistant-panel {
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100dvh !important;
+  border-width: 0 !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+/* Закрывает окно крестик приложения; своя кнопка панели оставила бы пустой экран. */
+html[data-pc-app-view="assistant"] .poppers-assistant-panel .window-bar button {
+  display: none !important;
+}

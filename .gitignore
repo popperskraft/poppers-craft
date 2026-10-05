@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+*.log
+.DS_Store
+._*
+next-env.d.ts
+*.tsbuildinfo
+# Сборки лаунчера раздаются с сервера, а не из репозитория
+public/launcher-authfix/
+ops/

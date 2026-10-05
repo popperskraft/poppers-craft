@@ -1,0 +1,474 @@
+/* Отметки и оформление подписчиков PLUS (lib/player-marks.ts,
+   lib/plus-style.ts). Фирменные цвета PLUS — розовый окна plus.exe и
+   синий его заголовка. Подключается после profile-ux.css. */
+
+:root {
+  --plus-pink: #ff6fae;
+  --plus-pink-deep: #8c1246;
+  --plus-accent: #1c44da;
+  --plus-glow: rgba(255, 111, 174, 0.55);
+  --pioneer-orange: #ff9b2f;
+  --pioneer-deep: #8a4300;
+}
+
+/* Цвет обводки выбирает сам игрок; по умолчанию розовый. */
+@property --ring {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff6fae;
+}
+
+@property --ring-glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(255, 111, 174, 0.55);
+}
+
+.is-plus {
+  --ring: var(--plus-pink);
+  --ring-glow: var(--plus-glow);
+}
+
+.is-plus.ring-blue { --ring: #38bdff; --ring-glow: rgba(56, 189, 255, 0.55); }
+.is-plus.ring-lime { --ring: #b8ff1f; --ring-glow: rgba(184, 255, 31, 0.5); }
+.is-plus.ring-gold { --ring: #ffc400; --ring-glow: rgba(255, 196, 0, 0.5); }
+.is-plus.ring-violet { --ring: #a66bff; --ring-glow: rgba(166, 107, 255, 0.55); }
+
+/* Радужная обводка переливается по кругу. */
+.is-plus.ring-rainbow { animation: plus-rainbow 5s linear infinite; }
+
+@keyframes plus-rainbow {
+  0%, 100% { --ring: #ff3b3b; --ring-glow: rgba(255, 59, 59, 0.5); }
+  17% { --ring: #ff9d2e; --ring-glow: rgba(255, 157, 46, 0.5); }
+  34% { --ring: #ffe600; --ring-glow: rgba(255, 230, 0, 0.5); }
+  50% { --ring: #3ad84a; --ring-glow: rgba(58, 216, 74, 0.5); }
+  67% { --ring: #29b6ff; --ring-glow: rgba(41, 182, 255, 0.5); }
+  84% { --ring: #b45cff; --ring-glow: rgba(180, 92, 255, 0.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-plus.ring-rainbow { animation: none; }
+}
+
+/* Маленькие плашки рядом с ником. */
+.plus-tag,
+.pioneer-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  width: fit-content;
+  padding: 3px 5px;
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 1px;
+  line-height: 1.2;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+.plus-tag { background: var(--plus-pink); }
+.pioneer-tag { background: var(--pioneer-orange); }
+
+/* Рамка поверх рисунка шапки, но под текстом: у .profile-flag свой
+   слой, поэтому внешняя тень там не видна. */
+.profile-flag > i.plus-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: 4px solid var(--ring);
+  box-shadow: inset 0 0 14px 2px var(--ring-glow);
+  pointer-events: none;
+}
+
+/* ---- поиск игроков ---- */
+.player-directory-card.is-plus {
+  box-shadow: 0 0 0 4px var(--ring), 0 0 22px 6px var(--ring-glow), 6px 6px 0 4px var(--ink);
+}
+
+.player-directory-card.is-plus:hover,
+.player-directory-card.is-plus:focus-visible {
+  box-shadow: 0 0 0 4px var(--ring), 0 0 28px 8px var(--ring-glow), 10px 10px 0 4px var(--ink);
+  outline-offset: 4px;
+}
+
+/* Плашки — строкой над скином, чтобы не закрывать его. */
+.player-directory-card .player-mark-tags {
+  margin: 10px 8px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.player-directory-card .player-mark-tags span { font-size: 8px; }
+
+.player-mark-tags .minecraft-icon.mc-png-icon.mc-icon-sm {
+  width: 11px;
+  height: 11px;
+}
+
+/* ---- карточка игрока ---- */
+.player-card.is-plus {
+  box-shadow: 0 0 0 5px var(--ring), 0 0 34px 10px var(--ring-glow), 10px 10px 0 5px var(--ink);
+}
+
+.player-card .plus-badge,
+.player-card .pioneer-badge,
+.player-card .tenure-badge {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.player-card .plus-badge { background: var(--plus-pink); box-shadow: 4px 4px 0 var(--plus-accent); }
+.player-card .pioneer-badge { background: var(--pioneer-orange); box-shadow: 4px 4px 0 var(--pioneer-deep); }
+.player-card .tenure-badge { background: #fff; box-shadow: 4px 4px 0 var(--plus-pink); }
+
+.player-card :is(.plus-badge, .pioneer-badge, .tenure-badge) b {
+  grid-row: 1 / span 2;
+  line-height: 0;
+}
+
+.player-card :is(.plus-badge, .pioneer-badge, .tenure-badge) b .minecraft-icon.mc-png-icon.mc-icon-sm {
+  display: block;
+  width: 26px;
+  height: 26px;
+}
+
+.player-card :is(.plus-badge, .pioneer-badge, .tenure-badge) small {
+  grid-column: 2;
+  font-size: 9px;
+  letter-spacing: 2px;
+  line-height: 1.6;
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+/* ---- темы карточки игрока (PLUS): фоны — в app/card-themes.css (r098) ---- */
+.player-card:is(.theme-night, .theme-nether, .theme-end, .theme-grass) :is(.player-handle, .player-stats a, .player-presence) {
+  color: inherit;
+}
+
+.player-card:is(.theme-night, .theme-nether, .theme-end, .theme-grass) .player-stats a:hover,
+.player-card:is(.theme-night, .theme-nether, .theme-end, .theme-grass) .player-stats a:focus-visible {
+  color: var(--ink);
+}
+
+/* Закреплённый пост в профиле. */
+.player-card .pinned-post { display: grid; gap: 10px; }
+.player-card .pinned-post h3 { margin: 0; font-size: 18px; }
+.player-card .pinned-post p { margin: 0; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.player-card .pinned-post img,
+.player-card .pinned-post video { width: 100%; max-height: 260px; object-fit: cover; border: 3px solid var(--ink); }
+.player-card .pinned-post a { width: fit-content; text-decoration: underline; text-underline-offset: 4px; }
+
+/* Подарить PLUS другому игроку. */
+.player-card .gift-plus-link {
+  width: fit-content;
+  margin-top: 14px;
+  padding: 10px 14px;
+  display: inline-block;
+  border: 3px solid var(--ink);
+  background: var(--plus-pink);
+  color: var(--ink);
+  box-shadow: 4px 4px 0 var(--plus-accent);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+/* ---- лента ---- */
+.feed-post .profile-flag .plus-tag {
+  justify-self: start;
+  margin-top: 4px;
+  font-size: 8px;
+}
+
+.feed-comments > div a.is-plus {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 2px solid var(--ring);
+  background: #fff;
+  box-shadow: 0 0 8px var(--ring-glow);
+}
+
+/* ---- подписчики и подписки ---- */
+.connection-row.is-plus {
+  box-shadow: 0 0 0 3px var(--ring), 0 0 16px 4px var(--ring-glow), 4px 4px 0 3px var(--ink);
+}
+
+/* ---- Wiki и отзывы ---- */
+.wiki-reader-byline > a.is-plus i {
+  box-shadow: 0 0 0 3px var(--ring), 0 0 12px 3px var(--ring-glow), 3px 3px 0 3px var(--ink);
+}
+
+.wiki-comment header a.is-plus span {
+  box-shadow: 0 0 0 2px var(--ring), 0 0 8px 2px var(--ring-glow);
+}
+
+.wiki-article-card b.is-plus,
+.review-author-link.is-plus {
+  padding: 1px 5px;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--ring), 0 0 8px 1px var(--ring-glow);
+}
+
+/* ---- стикеры PLUS ---- */
+.sticker-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 0 24px 18px;
+}
+
+.wiki-sticker-bar { padding: 0 clamp(18px, 4vw, 30px) 24px; }
+
+/* Под постом ленты стикеры — в той же серой полосе, что «Нравится» и
+   «Удалить», а не на белом под ней (замечание владельца, 2026-10-04). */
+.feed-reactions:has(+ .sticker-bar) { padding-bottom: 12px; }
+.feed-reactions + .sticker-bar { padding: 0 24px 16px; background: #d4d0c8; }
+.feed-stream.is-dark .feed-reactions + .sticker-bar { background: #24242e; }
+@media (max-width: 520px) {
+  .feed-reactions + .sticker-bar { padding-left: 14px; padding-right: 14px; }
+}
+
+.sticker-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border: 2px solid var(--ink);
+  background: #fff;
+  box-shadow: 2px 2px 0 var(--ink);
+  font: 900 10px/1 "Monocraft", ui-monospace, monospace;
+  cursor: pointer;
+}
+
+.sticker-bar button.mine { background: var(--plus-pink); }
+.sticker-bar button:disabled { cursor: default; opacity: 0.75; }
+.sticker-bar .minecraft-icon.mc-png-icon.mc-icon-sm { width: 18px; height: 18px; }
+.sticker-bar .sticker-hint { font-size: 10px; line-height: 1.5; }
+.sticker-bar .sticker-hint a { text-decoration: underline; }
+
+.sticker-picker {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+/* ---- ранний доступ: режимы ленты ---- */
+.feed-modes { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.feed-modes button {
+  padding: 8px 10px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 900 10px/1.2 "Monocraft", ui-monospace, monospace;
+  cursor: pointer;
+}
+
+.feed-modes button.active { background: var(--plus-pink); }
+
+.feed-stream.is-compact .feed-post h2 { padding: 16px 18px 6px; font-size: min(clamp(20px, 3vw, 26px), 9.4cqi); }
+.feed-stream.is-compact .feed-post-body {
+  padding: 4px 18px 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.feed-stream.is-compact .feed-post-image { max-height: 220px; object-fit: cover; }
+.feed-stream.is-compact .feed-comments { padding: 12px 18px 16px; }
+
+.feed-stream.is-dark .feed-post { background: #1a1a22; color: #f2f2f6; }
+.feed-stream.is-dark .feed-post > header { background: #24242e; }
+.feed-stream.is-dark .feed-reactions { background: #24242e; }
+.feed-stream.is-dark .feed-comments > div { background: #262630; color: #f2f2f6; }
+.feed-stream.is-dark .feed-comments time { color: #b9b9c6; }
+.feed-stream.is-dark .feed-reactions button,
+.feed-stream.is-dark .sticker-bar button { background: #3a3a48; color: #fff; }
+.feed-stream.is-dark .feed-reactions button.active { background: var(--acid); color: var(--ink); }
+.feed-stream.is-dark .sticker-bar button.mine { background: var(--plus-pink); color: var(--ink); }
+.feed-stream.is-dark .sticker-picker { background: #262630; }
+
+/* ---- кадры анимированной шапки в редакторе ---- */
+.pixel-header-frames { display: grid; gap: 6px; margin: 10px 0; }
+.pixel-header-frames > small { display: flex; align-items: center; gap: 8px; font-size: 9px; letter-spacing: 1px; }
+.pixel-frame-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.pixel-frame-list button {
+  min-width: 34px;
+  padding: 7px 9px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 900 10px/1 "Monocraft", ui-monospace, monospace;
+  cursor: pointer;
+}
+
+.pixel-frame-list button.active { background: var(--plus-pink); }
+.pixel-frame-list button.pixel-frame-remove { background: #ffc4c4; }
+.pixel-frame-speed { display: flex; align-items: center; gap: 8px; font-size: 9px; }
+.pixel-frame-speed select { padding: 6px; border: 3px solid var(--ink); background: #fff; font: 900 10px/1 "Monocraft", ui-monospace, monospace; }
+
+/* ---- места гардероба из PLUS ---- */
+.look-card.is-locked { opacity: 0.75; border-style: dashed; }
+.looks-counter { display: flex; align-items: center; gap: 8px; }
+
+/* Гардероб: окно «места закончились» с рассказом о подписке. */
+.looks-upsell {
+  margin: 12px 0 16px;
+  padding: 16px;
+  border: 3px solid var(--plus-pink, #ff6fae);
+  background: #fff4f8;
+  box-shadow: 5px 5px 0 rgba(255, 111, 174, 0.55);
+}
+
+.looks-upsell b {
+  display: block;
+  margin-bottom: 8px;
+  color: #c2185b;
+  font-size: 13px;
+}
+
+.looks-upsell p { margin: 0 0 10px; line-height: 1.6; }
+
+.looks-upsell ul {
+  margin: 0 0 10px;
+  padding-left: 20px;
+  line-height: 1.7;
+}
+
+.looks-upsell-hype {
+  padding: 8px 10px;
+  border: 2px dashed #6d8bff;
+  background: #0b1160;
+  color: #dbe3ff;
+}
+
+.looks-upsell-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.looks-upsell-button,
+.looks-upsell-actions button {
+  padding: 10px 14px;
+  border: 3px solid;
+  border-color: #ffd9e8 #8c1e4c #8c1e4c #ffd9e8;
+  background: #ff6fae;
+  color: #2a0a1a;
+  box-shadow: 3px 3px 0 #111;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.looks-upsell-actions button {
+  border-color: #fff #222 #222 #fff;
+  background: #d8d5ce;
+  color: #111;
+}
+
+/* HYPE: обводка светится заметнее, чем у PLUS. */
+.is-plus.is-hype::after,
+.is-plus.is-hype .plus-ring {
+  box-shadow: 0 0 0 3px var(--ring), 0 0 20px var(--ring-glow), 0 0 34px var(--ring-glow);
+}
+
+/* Профиль: загрузка файла скина исчерпана. */
+.skin-upload-locked {
+  padding: 14px;
+  border: 3px solid var(--ink, #111);
+  background: #eef1ff;
+  box-shadow: 4px 4px 0 rgba(43, 60, 230, 0.55);
+}
+
+.skin-upload-locked p { margin: 0 0 8px; line-height: 1.6; }
+.skin-upload-locked p:last-child { margin-bottom: 0; }
+
+.skin-upload-note {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+/* Плашка у ника подписчика HYPE — ультрамарин, как карточка тарифа. */
+.plus-tag.is-hype {
+  background: #9fb4ff;
+  color: #0b1160;
+}
+
+/* Значок тарифа на карточке игрока. */
+.project-creator-badge.plus-badge.is-hype {
+  background: linear-gradient(135deg, #0b1160, #2033d8);
+  box-shadow: 4px 4px 0 #6d8bff;
+  color: #f2f5ff;
+}
+.project-creator-badge.plus-badge.is-hype small { color: #9fb4ff; }
+
+/* Ник подписчика в комментариях, отзывах и списке статей: вместо рамки
+   вокруг ника — подчёркивание цветом обводки и маленький пиксельный
+   маркер. Рамка на тонком тексте выглядела неряшливо. */
+.feed-comments > div a.is-plus,
+.review-author-link.is-plus,
+.wiki-article-card b.is-plus {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  text-decoration-line: underline;
+  text-decoration-color: var(--ring);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+.feed-comments > div a.is-plus::before,
+.review-author-link.is-plus::before,
+.wiki-article-card b.is-plus::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  vertical-align: 0.12em;
+  background: var(--ring);
+  box-shadow: 0 0 6px var(--ring-glow);
+}
+
+/* r087: в тёмных темах карточки светлый текст наследовали белые блоки —
+   отзывы, «о себе», музыка, контакты — и его было не прочитать. Внутри
+   белых блоков текст снова тёмный. */
+.player-card:is(.theme-night, .theme-nether, .theme-end, .theme-grass) section {
+  color: var(--ink);
+}
+
+/* r087: радужная обводка в списке игроков переливается только под
+   курсором, в ленте — стоит (анимация остаётся в самом профиле). */
+.player-directory-card.ring-rainbow {
+  animation-play-state: paused;
+}
+
+.player-directory-card.ring-rainbow:is(:hover, :focus-visible) {
+  animation-play-state: running;
+}
+
+.feed-post header .ring-rainbow {
+  animation-play-state: paused;
+}

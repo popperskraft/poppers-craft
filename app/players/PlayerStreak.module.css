@@ -1,0 +1,21 @@
+.streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  min-height: 24px;
+  color: inherit;
+  vertical-align: middle;
+  white-space: nowrap;
+  font: 400 12px/1 "Monocraft", monospace;
+}
+
+.flame {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  image-rendering: pixelated;
+}
+
+.count { font-variant-numeric: tabular-nums; }

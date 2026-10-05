@@ -1,0 +1,130 @@
+/* PoppersMetro guide: a station-board version of the Wiki reader. */
+.metro-wiki-window { overflow: hidden; }
+.metro-wiki-hero {
+  padding: clamp(28px, 6vw, 68px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, 230px);
+  align-items: center;
+  gap: clamp(25px, 7vw, 90px);
+  border-bottom: 5px solid var(--ink);
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.055) 50%, transparent 50%) 0 0 / 8px 8px,
+    linear-gradient(135deg, #123c46, #142328 65%, #0f191d);
+  color: #fff;
+}
+.metro-wiki-hero-copy { min-width: 0; }
+.metro-wiki-badge { width: fit-content; margin-bottom: 18px; padding: 7px 10px; border: 3px solid var(--ink); background: var(--acid); color: var(--ink); box-shadow: 4px 4px 0 var(--cyan); font-size: 9px; }
+.metro-wiki-hero h1 { margin: 0; font-size: clamp(46px, 10vw, 112px); line-height: .83; overflow-wrap: anywhere; }
+.metro-wiki-hero h1 em { color: var(--acid); font-size: .42em; font-style: normal; letter-spacing: -.02em; }
+.metro-wiki-hero-copy > p { max-width: 700px; margin: 25px 0; color: #d6e8e5; font-size: clamp(12px, 1.8vw, 16px); line-height: 1.7; }
+.metro-wiki-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.metro-wiki-hero-actions > * { padding: 11px 13px; border: 3px solid var(--ink); background: var(--acid); color: var(--ink); box-shadow: 4px 4px 0 #000; font: 900 9px/1.2 "Monocraft", monospace; }
+.metro-wiki-hero-actions > a + a { background: var(--cyan); }
+.metro-wiki-sign { aspect-ratio: .84; padding: 17px; display: grid; align-content: center; justify-items: center; gap: 12px; border: 6px solid #e8e1c7; outline: 4px solid #0c1619; background: #1a514e; color: #f7edc8; box-shadow: 10px 10px 0 #000; transform: rotate(2deg); text-align: center; }
+.metro-wiki-sign-m { width: 80px; height: 80px; display: grid; place-items: center; border: 5px solid #f7edc8; color: var(--acid); font-size: 56px; line-height: 1; text-shadow: 4px 4px 0 #123b3d; }
+.metro-wiki-sign b { font-size: 12px; letter-spacing: .12em; }
+.metro-wiki-sign i { width: 100%; height: 5px; display: block; background: var(--acid); box-shadow: 0 4px 0 #10423f; }
+.metro-wiki-sign small { color: #c5e5d6; font-size: 7px; }
+.metro-wiki-index { padding: 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border-bottom: 4px solid var(--ink); background: #d4d0c8; }
+.metro-wiki-index a { padding: 10px; border: 3px solid var(--ink); background: #fff; font-size: 9px; line-height: 1.35; }
+.metro-wiki-index a:hover,.metro-wiki-index a:focus-visible { background: var(--acid); outline: 0; }
+.metro-wiki-flow { padding: clamp(22px, 5vw, 42px); border-bottom: 5px solid var(--ink); background: #b9cbd5; }
+.metro-wiki-kicker { margin-bottom: 16px; color: #164956; font-size: 10px; }
+.metro-wiki-step-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+.metro-wiki-step { position: relative; min-width: 0; padding: 19px 17px 17px; border: 4px solid var(--ink); background: #f8f5e9; box-shadow: 6px 6px 0 var(--ink); }
+.metro-wiki-step > span { display: inline-grid; width: 31px; height: 25px; place-items: center; margin-bottom: 13px; border: 3px solid var(--ink); background: var(--acid); font-size: 9px; }
+.metro-wiki-step h3 { margin: 0 0 8px; font-size: clamp(16px, 2.5vw, 24px); line-height: 1.05; }
+.metro-wiki-step p { margin: 0; font-size: 11px; line-height: 1.6; }
+.metro-wiki-note { margin: 22px 0 0; padding: 13px 15px; border-left: 7px solid var(--blue); background: #fff; font-size: 11px; line-height: 1.6; }
+.metro-wiki-section { scroll-margin-top: 24px; padding: clamp(25px, 5vw, 54px) clamp(22px, 6vw, 72px); border-bottom: 5px solid var(--ink); background: #fff; }
+.metro-wiki-section-sand { background: #f8f5e9; }
+.metro-wiki-section-faq { background: #b9cbd5; }
+.metro-wiki-section-heading { display: flex; align-items: center; gap: 15px; margin-bottom: 26px; }
+.metro-wiki-section-heading > div { min-width: 0; }
+.metro-wiki-section-heading span { display: block; margin-bottom: 7px; color: #277b91; font-size: 9px; }
+.metro-wiki-section-heading h2 { margin: 0; font-size: clamp(29px, 5vw, 55px); line-height: .9; overflow-wrap: anywhere; }
+.metro-wiki-lead { max-width: 830px; margin: 0 0 22px; font-size: clamp(14px, 2vw, 18px); line-height: 1.75; }
+.metro-wiki-columns { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(240px, .8fr); gap: clamp(22px, 5vw, 65px); align-items: start; }
+.metro-wiki-steps-list,.metro-wiki-bullet-list { margin: 0; padding-left: 25px; display: grid; gap: 14px; font-size: 13px; line-height: 1.7; }
+.metro-wiki-steps-list-numbered { gap: 16px; }
+.metro-wiki-steps-list b { color: #145b69; }
+.metro-wiki-card { min-width: 0; padding: 21px; border: 4px solid var(--ink); background: #f8f5e9; box-shadow: 7px 7px 0 var(--ink); }
+.metro-wiki-card-dark { background: #15282d; color: #fff; box-shadow: 7px 7px 0 #386c75; }
+.metro-wiki-card > span,.metro-wiki-checklist h3,.metro-wiki-management-grid span { color: var(--acid); font-size: 9px; }
+.metro-wiki-card h3 { margin: 12px 0 15px; font-size: 22px; }
+.metro-wiki-card ul { margin: 0; padding-left: 19px; display: grid; gap: 9px; font-size: 11px; line-height: 1.55; }
+.metro-wiki-card-dark li b { color: var(--acid); }
+.metro-wiki-callout { margin-top: 25px; padding: 15px 17px; border: 3px solid var(--ink); background: #fff39d; box-shadow: 5px 5px 0 var(--ink); font-size: 12px; line-height: 1.65; }
+.metro-wiki-callout-blue { background: #d7f0f6; }
+.metro-wiki-callout-yellow { margin-top: 0; }
+.metro-wiki-builder-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(210px, .7fr); gap: clamp(24px, 5vw, 60px); align-items: start; }
+.metro-wiki-checklist { padding: 20px; border: 4px solid var(--ink); background: #163d42; color: #fff; box-shadow: 7px 7px 0 var(--ink); }
+.metro-wiki-checklist h3 { margin: 0 0 17px; color: var(--acid); }
+.metro-wiki-checklist p { margin: 10px 0; font-size: 11px; line-height: 1.45; }
+.metro-wiki-checklist p span { display: inline-grid; width: 17px; height: 17px; place-items: center; margin-right: 6px; border: 2px solid var(--acid); color: var(--acid); }
+.metro-wiki-rail-map { padding: 21px; border: 4px solid var(--ink); background: #14292c; color: #fff; box-shadow: 7px 7px 0 #438d87; }
+.metro-wiki-rail-map-label { color: var(--acid); font-size: 9px; }
+.metro-wiki-rail-track { height: 24px; margin: 35px 0 13px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(#d8ceac 0 4px, transparent 4px 12px, #d8ceac 12px 16px, transparent 16px); }
+.metro-wiki-rail-track i { width: 13px; height: 13px; display: block; border: 3px solid var(--acid); background: #14292c; }
+.metro-wiki-rail-track i:first-child { background: var(--acid); }
+.metro-wiki-rail-stations { display: flex; justify-content: space-between; gap: 7px; color: #c1d9d0; font-size: 8px; }
+.metro-wiki-rail-map small { display: block; margin-top: 24px; color: #b5c5c1; font-size: 9px; line-height: 1.4; }
+.metro-wiki-trouble { margin-top: 27px; padding: 18px; border: 4px dashed #5e7778; background: #e9f0ed; }
+.metro-wiki-trouble h3 { margin: 0 0 8px; font-size: 18px; }
+.metro-wiki-trouble p { margin: 0; font-size: 12px; line-height: 1.65; }
+.metro-wiki-management-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.metro-wiki-management-grid article { padding: 19px; border: 4px solid var(--ink); background: #fff; box-shadow: 5px 5px 0 var(--ink); }
+.metro-wiki-management-grid article:nth-child(2) { background: #d7f0f6; }
+.metro-wiki-management-grid article:nth-child(3) { background: #fff39d; }
+.metro-wiki-management-grid h3 { margin: 12px 0 8px; font-size: 20px; }
+.metro-wiki-management-grid p { margin: 0; font-size: 11px; line-height: 1.6; }
+.metro-wiki-management-tip { margin: 25px 0 0; font-size: 13px; line-height: 1.7; }
+.metro-wiki-fare-section { background: #16393d; color: #fff; }
+.metro-wiki-fare-section .metro-wiki-section-heading span { color: var(--acid); }
+.metro-wiki-fare-section .metro-wiki-section-heading h2 { color: #fff; }
+.metro-wiki-fare-hero { width: fit-content; margin: 0 0 30px; padding: 14px 22px; display: flex; align-items: center; gap: 18px; border: 4px solid var(--ink); background: var(--acid); color: var(--ink); box-shadow: 7px 7px 0 #000; }
+.metro-wiki-fare-hero strong { font-size: clamp(54px, 9vw, 94px); line-height: .8; }
+.metro-wiki-fare-hero span { font-size: 11px; line-height: 1.35; }
+.metro-wiki-fare-columns .metro-wiki-lead,.metro-wiki-fare-columns .metro-wiki-bullet-list { color: #ecf5e8; }
+.metro-wiki-fare-columns .metro-wiki-bullet-list { font-size: 12px; }
+.metro-wiki-command-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.metro-wiki-command-grid > div { padding: 15px; border: 3px solid var(--ink); background: #f8f5e9; box-shadow: 4px 4px 0 var(--ink); }
+.metro-wiki-command-grid code { display: block; margin-bottom: 8px; color: #145b69; font: 900 12px/1.3 "Monocraft", monospace; overflow-wrap: anywhere; }
+.metro-wiki-command-grid p { margin: 0; font-size: 11px; line-height: 1.5; }
+.metro-wiki-faq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.metro-wiki-faq-grid details { min-width: 0; padding: 15px; border: 3px solid var(--ink); background: #fff; box-shadow: 4px 4px 0 var(--ink); }
+.metro-wiki-faq-grid summary { cursor: pointer; font-size: 12px; font-weight: 900; line-height: 1.4; }
+.metro-wiki-faq-grid details p { margin: 12px 0 0; font-size: 11px; line-height: 1.6; }
+.metro-wiki-section kbd { padding: 2px 5px; border: 2px solid var(--ink); background: #fff; box-shadow: 2px 2px 0 var(--ink); color: var(--ink); font: 900 11px "Monocraft", monospace; }
+
+/* Keep the metro styles isolated from the current site design. */
+.metro-wiki-page :is(a, summary):focus-visible { outline: 3px solid #1681a3; outline-offset: 4px; }
+.metro-wiki-management-grid span { color: #145b69; }
+.metro-wiki-columns > *,.metro-wiki-builder-grid > * { min-width: 0; }
+.metro-wiki-page code { overflow-wrap: anywhere; }
+.metro-wiki-diamond { padding: 2px 4px; background: #9bf3f4; color: #123c46; border-bottom: 2px solid #277b91; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.metro-wiki-fare-columns { max-width: 960px; }
+.metro-wiki-faq-grid { grid-template-columns: 1fr; }
+.metro-wiki-support { padding: clamp(22px, 5vw, 54px); background: #16393d; }
+.metro-wiki-support > a { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 104px; padding: clamp(20px, 4vw, 36px); border: 4px solid var(--ink); background: var(--cyan); color: var(--ink); box-shadow: 7px 7px 0 #000; font-size: clamp(18px, 3vw, 32px); line-height: 1.5; text-decoration: none; }
+.metro-wiki-support strong { display: block; }
+.metro-wiki-support > a > span:last-child { font-size: clamp(28px, 5vw, 52px); }
+.metro-wiki-support > a:hover { background: var(--acid); }
+.metro-wiki-page .metro-wiki-support > a:focus-visible { outline: 4px solid #fff; outline-offset: 5px; }
+@media (max-width: 720px) {
+  .metro-wiki-hero { grid-template-columns: 1fr; }
+  .metro-wiki-sign { width: 170px; justify-self: start; }
+  .metro-wiki-index,.metro-wiki-step-grid,.metro-wiki-management-grid,.metro-wiki-faq-grid { grid-template-columns: 1fr; }
+  .metro-wiki-columns,.metro-wiki-builder-grid { grid-template-columns: 1fr; }
+  .metro-wiki-rail-map { max-width: 540px; }
+}
+@media (max-width: 480px) {
+  .metro-wiki-section { padding-inline: 17px; }
+  .metro-wiki-hero { padding: 25px 18px 35px; }
+  .metro-wiki-hero h1 { font-size: clamp(40px, 16vw, 70px); }
+  .metro-wiki-flow { padding-inline: 17px; }
+  .metro-wiki-command-grid { grid-template-columns: 1fr; }
+  .metro-wiki-fare-hero { width: 100%; }
+  .metro-wiki-fare-hero strong { font-size: 65px; }
+  .metro-wiki-rail-stations { font-size: 7px; }
+}

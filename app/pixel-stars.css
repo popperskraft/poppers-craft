@@ -1,0 +1,12 @@
+.pixel-stars-display { display: inline-flex; align-items: center; gap: 3px; vertical-align: middle; }
+.pixel-star-icon { display: block; width: 22px; height: 22px; flex: none; filter: drop-shadow(1px 1px 0 #705b00); }
+.pixel-rating-picker { display: flex; flex-wrap: nowrap; gap: 6px; width: fit-content; max-width: 100%; }
+.pixel-rating-star { position: relative; display: block; width: 50px; height: 50px; flex: 0 0 50px; background: #fff8dc; border: 2px solid #978125; }
+.pixel-rating-star > .pixel-star-icon { position: absolute; inset: 9px; width: 28px; height: 28px; pointer-events: none; }
+.pixel-rating-picker .pixel-rating-half { position: absolute; z-index: 1; top: 0; bottom: 0; width: 50%; height: 100%; min-width: 0; min-height: 0; padding: 0; margin: 0; border: 0; box-shadow: none; background: transparent; border-radius: 0; cursor: pointer; transform: none; }
+.pixel-rating-half.is-left { left: 0; }.pixel-rating-half.is-right { right: 0; }
+.pixel-rating-picker .pixel-rating-half:hover { background: #2441db14; }
+.pixel-rating-picker .pixel-rating-half:focus-visible { outline: 3px solid #2441db; outline-offset: 1px; background: #2441db14; }
+.pixel-rating-picker .pixel-rating-half:disabled { cursor: default; opacity: 1; }
+.pixel-rating-picker:has(button:disabled) { opacity: .75; }
+@media (max-width: 420px) { .pixel-rating-star { width: 46px; height: 48px; flex-basis: 46px; }.pixel-rating-star > .pixel-star-icon { inset: 9px 7px; }.pixel-rating-picker { gap: 4px; } }

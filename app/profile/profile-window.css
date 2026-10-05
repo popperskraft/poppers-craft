@@ -1,0 +1,651 @@
+/* Окно профиля (app/profile/page.tsx): вкладки «Профиль», «Настройки»,
+   «Подписка», предпросмотр карточки, режим редактирования и устройства. */
+
+/* r098: окно профиля целиком, кроме шапки сайта, — 80% натуральной величины
+   на больших экранах (просьба владельца, 2026-10-03: так оно выглядело у него
+   при масштабе браузера 80%). Уменьшается всё окно разом, а не карточка в
+   студии: страница прокручивается как обычно, а курсор и рамки элементов
+   в Chromium и WebKit считаются в одних координатах (рисование шапки
+   не сбивается). */
+/* r099: кнопки разделов — над окном, той же ширины и в том же масштабе. */
+.profile-page.profile-page-with-tabs {
+  align-content: center;
+  row-gap: 18px;
+}
+
+.profile-page .profile-page-tabs {
+  width: min(1160px, 100%);
+  margin: 0;
+}
+
+.profile-page:has(.profile-studio) .profile-page-tabs {
+  width: min(1560px, 100%);
+}
+
+@media (min-width: 900px) {
+  .profile-page .profile-window,
+  .profile-page .profile-page-tabs {
+    zoom: 0.8;
+  }
+
+  /* Развёрнутый редактор шапки — поверх страницы в натуральную величину. */
+  .profile-page .pixel-header-editor.is-expanded {
+    zoom: 1.25;
+  }
+}
+
+.profile-window-name {
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  overflow-wrap: anywhere;
+}
+
+.profile-window-name small {
+  font-size: clamp(14px, 2vw, 18px);
+  color: #555;
+}
+
+.profile-tabs {
+  margin: 22px 0 28px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.profile-tabs a {
+  min-height: 58px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.profile-tabs a:hover {
+  background: #fff2a6;
+}
+
+.profile-tabs a[aria-current="page"] {
+  background: var(--cyan);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.profile-tabs a:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 4px;
+}
+
+/* ---- Профиль: предпросмотр ---- */
+.profile-overview {
+  display: grid;
+  gap: 18px;
+}
+
+.profile-overview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-overview-actions a {
+  min-height: 54px;
+  padding: 13px 20px;
+  display: inline-grid;
+  place-items: center;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.profile-overview-actions .profile-edit-button {
+  border-width: 4px;
+  border-color: #72ecf5 #087f91 #087f91 #72ecf5;
+  background: var(--cyan);
+  box-shadow: 6px 6px 0 var(--ink);
+  font-size: 16px;
+}
+
+.profile-overview-actions a:hover {
+  background: var(--acid);
+}
+
+.profile-overview-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.profile-overview-card {
+  margin-top: 6px;
+}
+
+/* ---- Профиль: редактирование ---- */
+.profile-edit-head {
+  display: grid;
+  gap: 10px;
+}
+
+.profile-edit-head h2 {
+  margin: 6px 0 0;
+  font-size: clamp(24px, 4vw, 40px);
+}
+
+.profile-edit-head p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.profile-edit-back {
+  width: fit-content;
+  padding: 10px 13px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+  font-weight: 900;
+}
+
+.profile-edit-back:hover {
+  background: var(--acid);
+}
+
+.profile-editor > .plus-studio {
+  margin-top: 26px;
+}
+
+.profile-edit-done {
+  margin-top: 30px;
+  justify-content: flex-start;
+}
+
+.profile-editor :is(#community-profile, #plus-ring, #plus-theme, #plus-pinned, #plus-skin, #plus-models, #plus-looks) {
+  scroll-margin-top: 16px;
+}
+
+/* ---- Подписка ---- */
+.profile-subscription > p:not(:first-child) {
+  line-height: 1.8;
+}
+
+.profile-subscription .plus-studio {
+  margin: 0;
+}
+
+/* ---- Настройки: активные устройства ---- */
+.devices-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.devices-list li {
+  padding: 14px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.devices-list li.is-current {
+  background: #e7ffd7;
+}
+
+.devices-list li > div {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.devices-list b {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.devices-list small {
+  color: #444;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.devices-current {
+  width: fit-content;
+  padding: 3px 6px;
+  border: 2px solid var(--ink);
+  background: var(--acid);
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.devices-list button {
+  padding: 9px 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  color: #a5261b;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.devices-list button:hover {
+  background: #ffe3df;
+}
+
+.devices-list button:disabled,
+.devices-panel .profile-actions button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.devices-panel .profile-actions {
+  margin-top: 16px;
+  justify-content: flex-start;
+}
+
+.devices-note {
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+  .profile-tabs {
+    gap: 8px;
+  }
+
+  .profile-tabs a {
+    min-height: 52px;
+    padding: 10px 6px;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+  }
+
+  .profile-overview-actions a {
+    width: 100%;
+  }
+
+  .devices-list li {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .devices-list button {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- Настройки: удаление аккаунта (соглашение 1.2) ---- */
+.delete-account-section {
+  border-color: #a5261b;
+}
+
+.delete-account-list {
+  margin: 0 0 16px;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.delete-account-start,
+.delete-account-submit {
+  color: #fff !important;
+  background: #a5261b !important;
+  box-shadow: 4px 4px 0 #4b0d08 !important;
+}
+
+.delete-account-start:hover,
+.delete-account-submit:hover:not(:disabled) {
+  background: #d03225 !important;
+}
+
+.delete-account-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.delete-account-methods {
+  margin: 0;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  border: 3px solid var(--ink);
+  background: #fff;
+}
+
+.delete-account-methods legend {
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.delete-account-methods label,
+.delete-account-confirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.delete-account-methods input,
+.delete-account-confirm input {
+  width: 20px !important;
+  height: 20px;
+  flex: 0 0 20px;
+  padding: 0 !important;
+}
+
+.delete-account-confirm {
+  padding: 12px;
+  border: 3px dashed #a5261b;
+  background: #ffe3df;
+}
+
+.delete-account-note {
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* ---- Шапка: кастомная, цвет или пресет (r099) ----
+   Кнопки вида шапки, под ними — то, что нужно этому виду: пиксельный
+   редактор, цвет с быстрыми образцами или галерея пресетов. */
+.header-mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.header-mode-tabs button {
+  min-height: 44px;
+  padding: 8px 6px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 900 12px/1.2 "Monocraft", monospace;
+  cursor: pointer;
+}
+
+.header-mode-tabs button:hover {
+  background: #fff2a6;
+}
+
+.header-mode-tabs button.active {
+  background: var(--cyan);
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.header-mode-tabs button:focus-visible,
+.header-color-chips button:focus-visible,
+.header-preset:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.header-color-mode {
+  display: grid;
+  gap: 12px;
+}
+
+.header-color-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.header-color-chips button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+}
+
+.header-color-chips button.active {
+  outline: 3px solid var(--acid);
+  outline-offset: 2px;
+}
+
+.header-preset-gallery {
+  display: grid;
+  gap: 14px;
+}
+
+.header-preset-group {
+  display: grid;
+  gap: 8px;
+}
+
+.header-preset-group > small {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.header-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 10px;
+}
+
+.header-preset {
+  min-width: 0;
+  padding: 6px 6px 8px;
+  display: grid;
+  gap: 6px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 900 10px/1.25 "Monocraft", monospace;
+  text-align: left;
+  cursor: pointer;
+}
+
+.header-preset:hover {
+  background: #fff2a6;
+}
+
+.header-preset.active {
+  outline: 4px solid var(--acid);
+  outline-offset: -1px;
+  background: #fffbe0;
+}
+
+/* Миниатюра — та же шапка в четыре раза больше, уменьшенная до плитки:
+   сцена видна целиком, как на настоящей шапке. */
+.header-preset-swatch {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 1;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+}
+
+.header-preset-swatch > .profile-flag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400%;
+  height: 400%;
+  transform: scale(0.25);
+  transform-origin: 0 0;
+}
+
+/* ---- Студия «Редактировать профиль»: слева живая карточка, справа настройки ---- */
+.profile-page:has(.profile-studio) .profile-window {
+  width: min(1560px, 100%);
+}
+
+/* Настройки занимают около трети ширины (400–540px), остальное — карточке.
+   Под карточкой — обводка, фон, пост, скин и модели (profile-studio-extras):
+   правая колонка занимает обе строки, поэтому они встают сразу под карточку. */
+.profile-studio {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(400px, 36%, 540px);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "preview main"
+    "extras main";
+  gap: 28px;
+  align-items: start;
+}
+
+.profile-studio-preview {
+  grid-area: preview;
+}
+
+.profile-studio-main {
+  grid-area: main;
+}
+
+.profile-studio-extras {
+  grid-area: extras;
+}
+
+.profile-studio-panel.profile-studio-extras > .plus-studio {
+  margin-top: 0;
+}
+
+/* Карточка стоит в странице как есть — просто уже, без своей прокрутки
+   и без уменьшения: прокручивается вся страница (просьба владельца).
+   Раскладка внутри карточки подстраивается под её собственную ширину,
+   а не под ширину окна — как на планшете и телефоне. */
+.profile-studio-preview {
+  container: studio-card / inline-size;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+@container studio-card (max-width: 760px) {
+  .profile-studio-preview .player-card .player-identity-row {
+    grid-template-columns: minmax(0, 1fr) 210px;
+    column-gap: 22px;
+  }
+
+  .profile-studio-preview .player-card .player-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Узкая карточка — одна колонка: имя, скин, «о себе», контакты. */
+@container studio-card (max-width: 560px) {
+  .profile-studio-preview .player-card .player-card-body {
+    padding: 24px;
+  }
+
+  .profile-studio-preview .player-card .player-identity-row,
+  .profile-studio-preview .player-card .player-identity-row.has-side {
+    grid-template-columns: 1fr;
+    grid-template-areas: "copy" "skin" "facts" "socials";
+  }
+
+  .profile-studio-preview .player-card .player-identity-row.has-side > :is(.player-main-col, .player-side-col) {
+    display: contents;
+  }
+
+  .profile-studio-preview .player-card .player-identity-row .player-skin-rating-column {
+    width: min(270px, 100%);
+    justify-self: center;
+    margin-top: 0;
+  }
+
+  /* Луна, солнце и прочее из угла темы заехали бы под имя. */
+  .profile-studio-preview .player-card {
+    --card-no-emblem: none;
+  }
+}
+
+.profile-studio-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+}
+
+.profile-studio-unsaved,
+.profile-studio-saved {
+  padding: 5px 8px;
+  border: 2px solid var(--ink);
+  font-size: 10px;
+}
+
+.profile-studio-unsaved {
+  background: #ffe761;
+}
+
+.profile-studio-saved {
+  background: #e7ffd7;
+}
+
+.profile-studio-note {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.profile-studio-panel {
+  min-width: 0;
+  padding: 18px;
+  border: 3px solid var(--ink);
+  background: #fbf9ef;
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.profile-studio-panel .profile-password {
+  margin-top: 22px;
+}
+
+.profile-studio-panel .plus-studio {
+  margin-top: 22px;
+}
+
+.profile-studio-panel .plus-page-sections {
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.profile-studio-panel .plus-page-sections a {
+  padding: 8px 10px;
+  font-size: 10px;
+}
+
+.profile-studio-panel :is(#community-profile, #plus-ring, #plus-theme, #plus-pinned, #plus-skin, #plus-models, #plus-looks) {
+  scroll-margin-top: 16px;
+}
+
+@media (max-width: 1100px) {
+  .profile-studio {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "preview"
+      "main"
+      "extras";
+  }
+}

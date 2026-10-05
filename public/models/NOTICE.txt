@@ -1,0 +1,41 @@
+Editor reference and original 64x32 monochrome drawing template:
+PonySkincraft — http://ponyskincraft.com/skin.php?action=edit
+Retrieved 12 September 2026 at the project owner's request.
+The template is converted to the current 64x64 Mine Little Pony layout,
+with mirrored left limbs/wings and current race/size metadata.
+No authorship or additional license is claimed for the original template.
+
+Minecraft 1.1 font
+Copyright Pwnage_Block 2011. Font metadata credits http://fontstruct.com.
+Unmodified font obtained from PonySkincraft:
+http://ponyskincraft.com/theme/css/fonts/Minecraft-1.1.woff
+Licensed under Creative Commons Attribution-ShareAlike 3.0:
+https://creativecommons.org/licenses/by-sa/3.0/
+The license applies to the font; other project components retain their licenses.
+
+Mine Little Pony geometry and legacy wing conversion: MIT license.
+https://github.com/MineLittlePony/MineLittlePony
+
+Human editor UV layout references skinview3d (MIT), https://github.com/bs-community/skinview3d
+MIT License
+
+Copyright (c) 2014-2018 Kent Rasmussen
+Copyright (c) 2017-2022 Haowei Wen, Sean Boult and contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

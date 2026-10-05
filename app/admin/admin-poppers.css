@@ -1,0 +1,208 @@
+/* «Управление → Попперс»: разбор обращений и база знаний. */
+.poppers-learning-heading {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.poppers-learning-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.poppers-learning-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 3px solid var(--ink);
+  background: var(--acid);
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.poppers-learning-actions a:hover {
+  background: #fff2a6;
+}
+
+.poppers-learning-intro {
+  max-width: 80ch;
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.poppers-learning-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.poppers-learning-filters button {
+  padding: 8px 10px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.poppers-learning-filters button.active {
+  background: var(--cyan);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.poppers-learning-filters i {
+  margin-left: 4px;
+  font-style: normal;
+  opacity: 0.7;
+}
+
+.poppers-learning-list {
+  display: grid;
+  gap: 18px;
+}
+
+.poppers-learning-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px;
+  border: 4px solid var(--ink);
+  background: #fff;
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.poppers-learning-card.approved {
+  background: #f2ffd6;
+}
+
+.poppers-learning-card.skipped {
+  opacity: 0.75;
+}
+
+.poppers-learning-card header {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+}
+
+.poppers-learning-card header span {
+  padding: 3px 6px;
+  border: 2px solid var(--ink);
+  background: #f2df91;
+  font-weight: 900;
+}
+
+.poppers-learning-chat {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.poppers-learning-chat li {
+  padding: 8px 10px;
+  border: 2px solid var(--ink);
+  background: #f8f5e9;
+}
+
+.poppers-learning-chat li.poppers {
+  background: #e6f7ff;
+}
+
+.poppers-learning-chat li.operator {
+  background: #ffe3f0;
+}
+
+.poppers-learning-chat li.note {
+  border-style: dashed;
+  background: transparent;
+}
+
+.poppers-learning-chat b {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 9px;
+}
+
+.poppers-learning-chat p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.poppers-learning-chat small {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  opacity: 0.6;
+}
+
+.poppers-learning-form {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.poppers-learning-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.poppers-learning-form input,
+.poppers-learning-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.poppers-learning-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.poppers-learning-buttons button {
+  padding: 9px 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.poppers-learning-buttons button.approve {
+  background: var(--acid);
+}
+
+.poppers-learning-buttons button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.poppers-learning-form > small {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+@media (max-width: 860px) {
+  .poppers-learning-card {
+    grid-template-columns: 1fr;
+  }
+}

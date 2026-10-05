@@ -1,0 +1,24 @@
+/* Кнопка рядом с IP на первом экране. Её подпись зависит от того, кто
+   зашёл («Подать заявку», «Оплатить пропуск», «Зайти в мир»), и длинные
+   слова не должны рваться посередине. Если рядом с IP места не хватает,
+   кнопка переходит на следующую строку. На телефоне (до 760px) кнопка и так
+   стоит под IP во всю ширину. */
+@media (min-width: 761px) {
+  .server-row {
+    flex-wrap: wrap;
+  }
+
+  .server-row .join-button {
+    flex: 0 0 auto;
+    min-height: 52px;
+    overflow-wrap: normal;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 760px) {
+  .server-row .join-button {
+    overflow-wrap: normal;
+    text-align: center;
+  }
+}

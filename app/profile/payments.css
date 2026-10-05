@@ -1,0 +1,126 @@
+/* «Настройки профиля → Оплата и PLUS». */
+.payments-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.payments-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.payments-card.plus {
+  background: var(--plus-pink);
+  box-shadow: 4px 4px 0 var(--plus-accent);
+}
+
+.payments-card > small {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.payments-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.payments-note {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.payments-note.test {
+  padding: 6px 10px;
+  border: 2px dashed var(--ink);
+  background: #fff2a6;
+  opacity: 1;
+}
+
+.payments-actions {
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.payments-history {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.payments-history li {
+  display: grid;
+  grid-template-columns: minmax(96px, auto) minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border: 2px solid var(--ink);
+  background: #f8f5e9;
+  font-size: 12px;
+}
+
+.payments-history b {
+  padding: 2px 6px;
+  border: 2px solid var(--ink);
+  background: #fff;
+  font-size: 10px;
+}
+
+.payments-history b.succeeded {
+  background: var(--acid);
+}
+
+.payments-history b.canceled,
+.payments-history b.failed {
+  background: #ffc4c4;
+}
+
+@media (max-width: 560px) {
+  .payments-history li {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.payments-actions button {
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--ink);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.payments-actions button:hover {
+  background: #fff2a6;
+}
+
+.payments-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Идёт HYPE — карточка подписки в цветах тарифа. */
+.payments-card.plus.is-hype {
+  background: linear-gradient(135deg, #0b1160, #2033d8);
+  box-shadow: 4px 4px 0 #6d8bff;
+  color: #f2f5ff;
+}
+.payments-card.plus.is-hype > small { color: #9fb4ff; }
+.payments-card.plus.is-hype a:not(.profile-primary-action) { color: #cdd8ff; }
+
+/* Кнопка HYPE рядом с кнопкой PLUS. */
+.profile-actions .profile-primary-action.hype {
+  border-color: #9fb4ff #1b28b8 #1b28b8 #9fb4ff;
+  background: linear-gradient(135deg, #4f68ff, #2233d0);
+  color: #fff;
+}

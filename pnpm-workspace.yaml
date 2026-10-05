@@ -1,0 +1,8 @@
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - jose@6.2.7
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
